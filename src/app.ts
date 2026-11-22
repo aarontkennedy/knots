@@ -41,7 +41,6 @@ function homeHtml(): string {
   <ul class="knot-list">${KNOTS.map(
     (k) => `<li><a class="knot-card" href="#/k/${k.id}">${knotSvg(k, 1, 1)}<span class="knot-card-text"><span class="knot-card-name">${esc(k.name)}</span><span class="knot-card-summary">${esc(k.summary)}</span></span></a></li>`,
   ).join('')}</ul>
-  <p class="footnote">Works offline. The drawings are this app’s own.</p>
 </main>`;
 }
 

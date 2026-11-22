@@ -189,15 +189,9 @@ body {
 }
 
 .intro,
-.summary,
-.footnote {
+.summary {
   margin: 0 0 var(--space-4);
   color: var(--muted);
-}
-
-.footnote {
-  margin-top: var(--space-5);
-  font-size: var(--text-sm);
 }
 
 /* --- Knot list --- */
