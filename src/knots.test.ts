@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { KNOTS, type Knot } from './knots';
+import { KNOTS, TASKS, type Knot } from './knots';
 import { crossings } from './rope';
 import { stepEnds } from './draw';
 
@@ -41,6 +41,11 @@ describe('the knots', () => {
     const ends = stepEnds(k);
     expect(ends.every((e, i) => e > (ends[i - 1] ?? 0))).toBe(true);
     expect(ends.at(-1)).toBeCloseTo(1, 5);
+  });
+
+  it('each job has knots for it, and each knot is good for some job', () => {
+    for (const t of TASKS) expect(KNOTS.some((k) => k.tasks.includes(t.id)), t.label).toBe(true);
+    for (const k of KNOTS) expect(k.tasks.length, k.name).toBeGreaterThan(0);
   });
 
   it.each(KNOTS)('$name only names points its ropes have', (k) => {

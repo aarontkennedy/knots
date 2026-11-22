@@ -34,9 +34,10 @@ test('plays straight through, and remembers that choice', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Play through' })).toHaveAttribute('aria-pressed', 'true');
 });
 
-test('every knot page fits the phone screen without sideways scrolling', async ({ page }) => {
+test('the list and every knot page fit the phone screen without sideways scrolling', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('./');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth), 'list').toBeLessThanOrEqual(0);
   const ids = await page.locator('.knot-card').evaluateAll((els) => els.map((e) => e.getAttribute('href')!));
   for (const href of ids) {
     await page.goto(`./${href}`);
@@ -44,4 +45,15 @@ test('every knot page fits the phone screen without sideways scrolling', async (
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     expect(overflow, href).toBeLessThanOrEqual(0);
   }
+});
+
+test('narrows the list to knots for a job', async ({ page }) => {
+  await page.goto('./');
+  await page.getByRole('button', { name: 'Join two ropes' }).click();
+  await expect(page.locator('.knot-card:visible')).toHaveCount(2);
+  await page.getByRole('link', { name: /Sheet bend/ }).click();
+  await page.getByRole('link', { name: 'All knots' }).click();
+  await expect(page.locator('.knot-card:visible')).toHaveCount(2);
+  await page.getByRole('button', { name: 'All', exact: true }).click();
+  await expect(page.locator('.knot-card:visible')).toHaveCount(10);
 });

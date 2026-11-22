@@ -188,13 +188,42 @@ body {
   padding: 0 var(--space-4) var(--space-5);
 }
 
-.intro,
 .summary {
   margin: 0 0 var(--space-4);
   color: var(--muted);
 }
 
 /* --- Knot list --- */
+
+.filter-label {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* Filter chips: wrap onto as many lines as they need. */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.chip {
+  min-height: var(--tap);
+  padding: 0 var(--space-4);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--tint);
+  color: var(--on-tint);
+  font: 600 var(--text-sm) var(--font);
+}
+
+.chip[aria-pressed='true'] {
+  background: var(--accent);
+  color: var(--on-accent);
+}
 
 .knot-list {
   list-style: none;

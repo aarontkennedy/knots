@@ -11,6 +11,8 @@ describe('readable text', () => {
 
   it('makes buttons at least a thumb wide', () => {
     expect(css).toMatch(/--tap: 44px/);
-    for (const block of css.match(/\.(controls|mode) button \{[^}]*\}/g)!) expect(block).toContain('min-height: var(--tap)');
+    const blocks = css.match(/\.(controls button|mode button|chip) \{[^}]*\}/g)!;
+    expect(blocks).toHaveLength(3);
+    for (const block of blocks) expect(block).toContain('min-height: var(--tap)');
   });
 });

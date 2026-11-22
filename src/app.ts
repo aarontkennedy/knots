@@ -1,6 +1,6 @@
 // The app: a list of knots, and a page for each that shows how to tie it, step by step or
 // played straight through (the choice is remembered), what it's for and how to remember it.
-import { KNOTS, type Knot } from './knots';
+import { KNOTS, TASKS, type Knot, type Task } from './knots';
 import { knotSvg } from './draw';
 import { frameAt, run, timeline, type Segment } from './player';
 import { mountAbout } from './about';
@@ -30,6 +30,9 @@ const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 
 const CHEVRON = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>';
 
+/** The list's filter: kept while the app is open, so coming back from a knot keeps it. */
+let filter: Task | 'all' = 'all';
+
 function homeHtml(): string {
   return `<header class="topbar">
   <h1>Knots</h1>
@@ -37,11 +40,32 @@ function homeHtml(): string {
   <a class="top-action top-icon" href="#/about" aria-label="About">${INFO_ICON}</a>
 </header>
 <main class="page">
-  <p class="intro">Ten useful knots: what each is for, how to remember it, and how to tie it.</p>
+  <h2 class="filter-label" id="filter-label">What do you need to do?</h2>
+  <div class="chips" role="group" aria-labelledby="filter-label">${[{ id: 'all', label: 'All' }, ...TASKS]
+    .map((t) => `<button type="button" class="chip" data-filter="${t.id}" aria-pressed="${t.id === filter}">${t.label}</button>`)
+    .join('')}</div>
   <ul class="knot-list">${KNOTS.map(
-    (k) => `<li><a class="knot-card" href="#/k/${k.id}">${knotSvg(k, 1, 1)}<span class="knot-card-text"><span class="knot-card-name">${esc(k.name)}</span><span class="knot-card-summary">${esc(k.summary)}</span></span></a></li>`,
+    (k) => `<li data-tasks="${k.tasks.join(' ')}"><a class="knot-card" href="#/k/${k.id}">${knotSvg(k, 1, 1)}<span class="knot-card-text"><span class="knot-card-name">${esc(k.name)}</span><span class="knot-card-summary">${esc(k.summary)}</span></span></a></li>`,
   ).join('')}</ul>
 </main>`;
+}
+
+/** Shows only the knots for the chosen job. */
+function applyFilter(root: HTMLElement): void {
+  root.querySelectorAll<HTMLElement>('[data-filter]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.filter === filter)));
+  root.querySelectorAll<HTMLElement>('[data-tasks]').forEach((li) => {
+    li.hidden = filter !== 'all' && !li.dataset.tasks!.split(' ').includes(filter);
+  });
+}
+
+function setUpFilter(root: HTMLElement): void {
+  root.querySelectorAll<HTMLButtonElement>('[data-filter]').forEach((b) =>
+    b.addEventListener('click', () => {
+      filter = b.dataset.filter as Task | 'all';
+      applyFilter(root);
+    }),
+  );
+  applyFilter(root);
 }
 
 /** A page under the list (About, Settings): back arrow, centered title. */
@@ -214,6 +238,7 @@ export function startApp(root: HTMLElement): () => void {
     } else {
       document.title = 'Knots';
       root.innerHTML = homeHtml();
+      setUpFilter(root);
     }
     document.documentElement.scrollTop = 0;
   };

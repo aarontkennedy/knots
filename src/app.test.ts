@@ -33,6 +33,22 @@ describe('the list', () => {
     expect(document.title).toBe('Knots');
   });
 
+  it('filters the knots by the job you need done, and keeps the filter', () => {
+    stop = startApp(root());
+    const shown = () => [...root().querySelectorAll<HTMLElement>('.knot-list li')].filter((li) => !li.hidden).map((li) => li.querySelector('.knot-card-name')!.textContent);
+    expect(shown()).toHaveLength(KNOTS.length);
+    expect($('[data-filter="all"]').getAttribute('aria-pressed')).toBe('true');
+    click('[data-filter="join"]');
+    expect(shown()).toEqual(['Square knot', 'Sheet bend']);
+    expect($('[data-filter="join"]').getAttribute('aria-pressed')).toBe('true');
+    expect($('[data-filter="all"]').getAttribute('aria-pressed')).toBe('false');
+    go('#/k/square');
+    go('#/');
+    expect(shown()).toHaveLength(2);
+    click('[data-filter="all"]');
+    expect(shown()).toHaveLength(KNOTS.length);
+  });
+
   it('has Settings and About buttons, named for screen readers', () => {
     stop = startApp(root());
     expect($('[aria-label="Settings"]').getAttribute('href')).toBe('#/settings');

@@ -18,9 +18,24 @@ export interface Prop {
   h: number;
 }
 
+/** What someone might need a knot for: the filters on the list. */
+export const TASKS = [
+  { id: 'tie', label: 'Tie to a post or ring' },
+  { id: 'loop', label: 'Make a loop' },
+  { id: 'join', label: 'Join two ropes' },
+  { id: 'tighten', label: 'Pull a line tight' },
+  { id: 'load', label: 'Tie down a load' },
+  { id: 'stop', label: 'Stop an end slipping' },
+  { id: 'bundle', label: 'Tie around a bundle' },
+] as const;
+
+export type Task = (typeof TASKS)[number]['id'];
+
 export interface Knot {
   id: string;
   name: string;
+  /** The jobs it's good for (TASKS). */
+  tasks: Task[];
   /** One line: what it does. */
   summary: string;
   uses: string[];
@@ -51,6 +66,7 @@ const EIGHT_UNDER: [number, number][] = [[12.4, 13.4], [16.4, 17.4]];
 export const KNOTS: Knot[] = [
   {
     id: 'square',
+    tasks: ['join', 'bundle'],
     name: 'Square knot',
     summary: 'Ties two ends together snugly around something, like a bundle or a bandage.',
     uses: ['Tying up a bundle, a bag or a sail', 'Finishing a bandage or sling', 'Tying shoelaces (the bow is a square knot with loops)'],
@@ -73,6 +89,7 @@ export const KNOTS: Knot[] = [
   },
   {
     id: 'bowline',
+    tasks: ['tie', 'loop'],
     name: 'Bowline',
     summary: 'A fixed loop in the end of a rope that won’t slip, and unties easily afterwards.',
     uses: ['A loop to drop over a post or a cleat', 'Tying a rope around a tree or a person', 'Tying a line to a ring or a mooring'],
@@ -98,6 +115,7 @@ export const KNOTS: Knot[] = [
   },
   {
     id: 'clove',
+    tasks: ['tie', 'bundle'],
     name: 'Clove hitch',
     summary: 'A quick hitch around a post or rail that’s easy to adjust.',
     uses: ['Tying a boat to a post for a short stop', 'Starting a lashing on a pole', 'Hanging something from a rail'],
@@ -120,6 +138,7 @@ export const KNOTS: Knot[] = [
   },
   {
     id: 'halfhitches',
+    tasks: ['tie', 'load'],
     name: 'Two half hitches',
     summary: 'Ties a rope to a ring, post or rail, quickly and securely.',
     uses: ['Tying a line to a ring or a tree', 'Hanging a tarp or a bear bag', 'Finishing off other knots, like the trucker’s hitch'],
@@ -146,6 +165,7 @@ export const KNOTS: Knot[] = [
   },
   {
     id: 'figure8',
+    tasks: ['stop'],
     name: 'Figure-eight stopper',
     summary: 'A chunky knot in the end of a rope that stops it slipping through a hole.',
     uses: ['Stopping a rope pulling out of a pulley, cleat or grommet', 'The end of a sheet or halyard on a boat', 'A quick knot you can always untie'],
@@ -161,6 +181,7 @@ export const KNOTS: Knot[] = [
   },
   {
     id: 'figure8loop',
+    tasks: ['loop'],
     name: 'Figure-eight loop',
     summary: 'A strong fixed loop that’s easy to check by eye.',
     uses: ['Clipping a rope to a carabiner', 'A loop to hang a bag or a pulley from', 'Climbing (the follow-through version)'],
@@ -184,6 +205,7 @@ export const KNOTS: Knot[] = [
   },
   {
     id: 'sheetbend',
+    tasks: ['join'],
     name: 'Sheet bend',
     summary: 'Joins two ropes, even of different thicknesses.',
     uses: ['Making a rope longer with another one', 'Joining a thin line to a thick one', 'Tying a rope to the corner of a tarp'],
@@ -212,6 +234,7 @@ export const KNOTS: Knot[] = [
   },
   {
     id: 'tautline',
+    tasks: ['tie', 'tighten'],
     name: 'Taut-line hitch',
     summary: 'A loop that slides to tighten a line, then holds.',
     uses: ['Tent and tarp guy lines', 'A clothesline you can tighten', 'Tying down a load, then adjusting it'],
@@ -239,6 +262,7 @@ export const KNOTS: Knot[] = [
   },
   {
     id: 'trucker',
+    tasks: ['tighten', 'load'],
     name: 'Trucker’s hitch',
     summary: 'A rope pulley for pulling a line really tight, then tying it off.',
     uses: ['Tying a canoe or a load onto a roof rack', 'Pulling a ridge line tight for a tarp', 'Tying down a load in a trailer'],
@@ -270,6 +294,7 @@ export const KNOTS: Knot[] = [
   },
   {
     id: 'cleat',
+    tasks: ['tie'],
     name: 'Cleat hitch',
     summary: 'Ties a boat’s line to a cleat on a dock, quick to tie and untie.',
     uses: ['Tying up a boat at a dock', 'Tying off a halyard or sheet on a boat', 'Tying a canoe line to a cleat'],
