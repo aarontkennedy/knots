@@ -37,6 +37,8 @@ const html = `
   <b>Home screen</b>.</p>
   <p>From then on, open Knots from its icon on your home screen. Open it once while
   you’re online, and after that it works anywhere.</p>
+  <p>To send Knots to someone else, tap the <b>Share</b> button at the top of the list of
+  knots: three dots joined by lines. You can send it by text or email.</p>
 
   <h2>Use knots safely</h2>
   <p>This app is for learning everyday knots. Practice a knot before you rely on it,

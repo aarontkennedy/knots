@@ -11,7 +11,9 @@ const go = (hash: string) => {
   window.dispatchEvent(new HashChangeEvent('hashchange'));
 };
 
-beforeEach(() => {
+beforeEach(async () => {
+  // Changing location.hash fires hashchange later: let any from the last test go by first.
+  await new Promise((r) => setTimeout(r, 0));
   // Steps show finished at once, as for someone who asks for less motion.
   vi.stubGlobal('matchMedia', (q: string) => ({ matches: q.includes('reduce') }));
   document.body.innerHTML = '<div id="app"></div>';
@@ -47,6 +49,28 @@ describe('the list', () => {
     expect(shown()).toHaveLength(3);
     click('[data-filter="all"]');
     expect(shown()).toHaveLength(KNOTS.length);
+  });
+
+  it('offers text and email links when the phone has no share sheet', async () => {
+    stop = startApp(root());
+    const menu = $('[data-share-menu]');
+    expect(menu.hidden).toBe(true);
+    click('[data-share]');
+    await vi.waitFor(() => expect(menu.hidden).toBe(false));
+    expect($('[data-share]').getAttribute('aria-expanded')).toBe('true');
+    expect($('.share-menu a').getAttribute('href')).toMatch(/^sms:\?&body=/);
+    click('[data-share]');
+    await vi.waitFor(() => expect(menu.hidden).toBe(true));
+  });
+
+  it('opens the share sheet when the phone has one', async () => {
+    const share = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'share', { configurable: true, value: share });
+    stop = startApp(root());
+    click('[data-share]');
+    await vi.waitFor(() => expect(share).toHaveBeenCalled());
+    expect($('[data-share-menu]').hidden).toBe(true);
+    Reflect.deleteProperty(navigator, 'share');
   });
 
   it('has Settings and About buttons, named for screen readers', () => {

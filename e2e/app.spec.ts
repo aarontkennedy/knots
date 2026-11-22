@@ -59,3 +59,14 @@ test('narrows the list to knots for a job', async ({ page }) => {
   await page.getByRole('button', { name: 'All', exact: true }).click();
   await expect(page.locator('.knot-card:visible')).toHaveCount(14);
 });
+
+test('Share offers text and email when the browser has no share sheet', async ({ page }) => {
+  await page.addInitScript(() => {
+    delete (Navigator.prototype as { share?: unknown }).share;
+  });
+  await page.goto('./');
+  await page.getByRole('button', { name: 'Share' }).click();
+  await expect(page.getByRole('link', { name: 'Send a text' })).toHaveAttribute('href', /^sms:\?&body=/);
+  await expect(page.getByRole('link', { name: 'Send an email' })).toHaveAttribute('href', /^mailto:/);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
+});

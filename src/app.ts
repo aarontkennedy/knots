@@ -4,7 +4,8 @@ import { KNOTS, TASKS, type Knot, type Task } from './knots';
 import { knotSvg } from './draw';
 import { frameAt, run, timeline, type Segment } from './player';
 import { mountAbout } from './about';
-import { BACK_ICON, GEAR_ICON, INFO_ICON } from './icons';
+import { BACK_ICON, GEAR_ICON, INFO_ICON, SHARE_ICON } from './icons';
+import { openShareSheet, shareLinks } from './share';
 import { getAppearance, setAppearance, type Appearance } from './theme';
 
 export type Mode = 'step' | 'play';
@@ -34,11 +35,17 @@ const CHEVRON = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path 
 let filter: Task | 'all' = 'all';
 
 function homeHtml(): string {
+  const links = shareLinks();
   return `<header class="topbar">
   <h1>Knots</h1>
+  <button type="button" class="top-action top-icon" data-share aria-label="Share" aria-expanded="false">${SHARE_ICON}</button>
   <a class="top-action top-icon" href="#/settings" aria-label="Settings">${GEAR_ICON}</a>
   <a class="top-action top-icon" href="#/about" aria-label="About">${INFO_ICON}</a>
 </header>
+<div class="share-menu" data-share-menu hidden>
+  <a class="btn" href="${links.text}">Send a text</a>
+  <a class="btn secondary" href="${links.email}">Send an email</a>
+</div>
 <main class="page">
   <h2 class="filter-label" id="filter-label">What do you need to do?</h2>
   <div class="chips" role="group" aria-labelledby="filter-label">${[{ id: 'all', label: 'All' }, ...TASKS]
@@ -55,6 +62,17 @@ function applyFilter(root: HTMLElement): void {
   root.querySelectorAll<HTMLElement>('[data-filter]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.filter === filter)));
   root.querySelectorAll<HTMLElement>('[data-tasks]').forEach((li) => {
     li.hidden = filter !== 'all' && !li.dataset.tasks!.split(' ').includes(filter);
+  });
+}
+
+/** Share: the phone's share sheet, or text and email links where there isn't one. */
+function setUpShare(root: HTMLElement): void {
+  const button = root.querySelector<HTMLButtonElement>('[data-share]')!;
+  const menu = root.querySelector<HTMLElement>('[data-share-menu]')!;
+  button.addEventListener('click', async () => {
+    if (await openShareSheet()) return;
+    menu.hidden = !menu.hidden;
+    button.setAttribute('aria-expanded', String(!menu.hidden));
   });
 }
 
@@ -238,6 +256,7 @@ export function startApp(root: HTMLElement): () => void {
     } else {
       document.title = 'Knots';
       root.innerHTML = homeHtml();
+      setUpShare(root);
       setUpFilter(root);
     }
     document.documentElement.scrollTop = 0;
