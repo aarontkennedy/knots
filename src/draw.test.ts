@@ -3,6 +3,12 @@ import { KNOTS } from './knots';
 import { knotSvg, propSvg, stepEnds } from './draw';
 
 describe('propSvg', () => {
+  it('draws a hook with its eye, outlined so rope behind it shows', () => {
+    const hook = propSvg({ kind: 'hook', x: 50, y: 20, w: 4, h: 30 });
+    expect(hook).toContain('<circle cx="50" cy="20" r="4"/>');
+    expect(hook.indexOf('hook-edge')).toBeLessThan(hook.indexOf('class="hook"'));
+  });
+
   it('draws a post or rail as a bar, and a cleat with its base', () => {
     expect(propSvg({ kind: 'rail', x: 1, y: 2, w: 3, h: 4 })).toBe('<rect class="prop" x="1" y="2" width="3" height="4" rx="2"/>');
     const cleat = propSvg({ kind: 'cleat', x: 0, y: 0, w: 100, h: 10 });
@@ -17,7 +23,7 @@ describe('knotSvg', () => {
     const tight = knotSvg(k, 0, 1);
     expect(tight).toContain('rope-core');
     expect(tight).not.toContain('NaN');
-    if (k.prop) expect(tight).toContain('class="prop"');
+    if (k.prop) expect(tight).toMatch(k.prop.kind === 'hook' ? /class="hook"/ : /class="prop"/);
   });
 
   it('is hidden from screen readers (the caption says what it shows)', () => {

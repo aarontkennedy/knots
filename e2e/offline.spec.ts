@@ -11,7 +11,7 @@ test('works offline after the first visit, every knot included', async ({ page, 
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Knots', exact: true })).toBeVisible();
   const links = await page.locator('.knot-card').evaluateAll((els) => els.map((e) => e.getAttribute('href')!));
-  expect(links).toHaveLength(10);
+  expect(links).toHaveLength(14);
   for (const href of links) {
     await page.goto(`./${href}`);
     await expect(page.locator('[data-art] svg')).toBeVisible();

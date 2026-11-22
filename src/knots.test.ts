@@ -18,7 +18,7 @@ function pattern(k: Knot, rope = 0): string {
 const knot = (id: string) => KNOTS.find((k) => k.id === id)!;
 
 describe('the knots', () => {
-  it('are the everyday ten, in order', () => {
+  it('are the everyday ten, then the fishing knots', () => {
     expect(KNOTS.map((k) => k.name)).toEqual([
       'Square knot',
       'Bowline',
@@ -30,6 +30,10 @@ describe('the knots', () => {
       'Taut-line hitch',
       'Trucker’s hitch',
       'Cleat hitch',
+      'Improved clinch knot',
+      'Palomar knot',
+      'Uni knot',
+      'Snell knot',
     ]);
     expect(new Set(KNOTS.map((k) => k.id)).size).toBe(KNOTS.length);
   });
@@ -85,6 +89,13 @@ describe('crossings', () => {
     expect(pattern(knot('tautline'))).toBe('UOUOUOUOUOUOOOUU');
     expect(pattern(knot('trucker'))).toBe('OUOUOUOUUOOUUO');
     expect(pattern(knot('cleat'))).toBe('UUUUUUOOOOOOUO');
+  });
+
+  it('the fishing knots: turns go over then under, tucks go through their loops', () => {
+    expect(pattern(knot('clinch'))).toBe('OUOUOUOUOUUOUUOUOUOUOUOUOOUOOU');
+    expect(pattern(knot('palomar'))).toBe('OUOUOU'); // a true overhand, tied in doubled line
+    expect(pattern(knot('uni'))).toBe('UOUOUOUOUOUUOUOUOUOUOOUOOUUOOUUOOUUOOUUOOUUO');
+    expect(pattern(knot('snell'))).toBe('UOUOUOUOUOUOUOOUUOOUUOOUUOOUUOOUUOOUOUOUOUOUOU');
   });
 
   it('the sheet bend: the thin rope goes round behind the U and tucks under itself', () => {

@@ -9,8 +9,8 @@ export const FEEDBACK_EMAIL = 'aarontkennedy@gmail.com';
 const NOTICES_URL = 'THIRD_PARTY_NOTICES.txt';
 
 const html = `
-  <p>Ten useful knots: what each is for, a way to remember it, and how to tie it, made by
-  ${OWNER}. No ads, no accounts and no tracking. After your first visit, it works without
+  <p>Useful knots for around the house, camp, boat and fishing: what each is for, a way to
+  remember it, and how to tie it, made by ${OWNER}. No ads, no accounts and no tracking. After your first visit, it works without
   an internet connection, so it’s there at the campsite or on the water.</p>
 
   <h2>Add it to your phone</h2>

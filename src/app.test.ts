@@ -39,12 +39,12 @@ describe('the list', () => {
     expect(shown()).toHaveLength(KNOTS.length);
     expect($('[data-filter="all"]').getAttribute('aria-pressed')).toBe('true');
     click('[data-filter="join"]');
-    expect(shown()).toEqual(['Square knot', 'Sheet bend']);
+    expect(shown()).toEqual(['Square knot', 'Sheet bend', 'Uni knot']);
     expect($('[data-filter="join"]').getAttribute('aria-pressed')).toBe('true');
     expect($('[data-filter="all"]').getAttribute('aria-pressed')).toBe('false');
     go('#/k/square');
     go('#/');
-    expect(shown()).toHaveLength(2);
+    expect(shown()).toHaveLength(3);
     click('[data-filter="all"]');
     expect(shown()).toHaveLength(KNOTS.length);
   });

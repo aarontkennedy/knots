@@ -29,5 +29,5 @@ test('About explains how to add the app to your phone, and shows the notices', a
   await page.getByText('Show the license notices').click();
   await expect(page.locator('[data-notices]')).toContainText('Workbox');
   await page.getByRole('link', { name: 'Back to knots' }).click();
-  await expect(page.locator('.knot-card')).toHaveCount(10);
+  await expect(page.locator('.knot-card')).toHaveCount(14);
 });

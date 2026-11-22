@@ -11,7 +11,8 @@ export interface Step {
 
 /** What the knot is tied to, drawn between the rope behind it and the rope in front. */
 export interface Prop {
-  kind: 'rail' | 'post' | 'cleat';
+  /** For a hook, (x, y) is the middle of the eye, w its radius and h the shank's length. */
+  kind: 'rail' | 'post' | 'cleat' | 'hook';
   x: number;
   y: number;
   w: number;
@@ -27,6 +28,7 @@ export const TASKS = [
   { id: 'load', label: 'Tie down a load' },
   { id: 'stop', label: 'Stop an end slipping' },
   { id: 'bundle', label: 'Tie around a bundle' },
+  { id: 'hook', label: 'Tie on a fishing hook' },
 ] as const;
 
 export type Task = (typeof TASKS)[number]['id'];
@@ -62,6 +64,50 @@ const EIGHT: Point[] = [
   [36, 32], [30, 24], [21, 27], [21, 48], [27, 56], [46, 52], [52, 46], [54, 34],
 ];
 const EIGHT_UNDER: [number, number][] = [[12.4, 13.4], [16.4, 17.4]];
+
+// --- Fishing knots: line tied to a hook. Wraps are laid out here, not point by point. ---
+
+/** A range `half` a point either side of each of `at` (around a crossing). */
+const around = (at: number[], half = 0.35): [number, number][] => at.map((a) => [a - half, a + half]);
+
+// Improved clinch: through the eye, five turns around the line, back through the small loop
+// by the eye, then up through the big loop.
+const CLINCH_TURNS = 5;
+const CLINCH: Point[] = [
+  [50, 2], [50, 24], [50, 44], [50, 58], [50, 66], [50, 76], [53, 81], [58, 77], [58, 66], [57, 53],
+  ...Array.from({ length: CLINCH_TURNS }, (_, i): Point[] => {
+    const b = 47 - 8 * i;
+    return [[50, b], [44, b - 2], [50, b - 4], [56, b - 6]];
+  }).flat(),
+  [60, 5], [64, 9], [64, 40], [64, 54], [58, 58.5], [46, 58.5], [42, 55], [44, 51], [52, 51], [60, 51], [68, 51], [74, 52],
+];
+const CLINCH_END = 10 + 4 * CLINCH_TURNS; // the first point after the turns
+
+// Uni: through the eye, the end laid back up the line, a loop, and six turns inside it.
+const UNI_TURNS = 5;
+const UNI: Point[] = [
+  [48, 2], [48, 30], [48, 50], [49, 62], [52, 74], [56, 78], [58, 72], [55, 60], [55, 40], [55, 22],
+  [52, 13], [45, 12], [36, 18], [33, 36], [35, 54], [42, 60],
+  ...Array.from({ length: UNI_TURNS }, (_, i): Point[] => [[60, 57 - 7 * i], [42, 53.5 - 7 * i]]).flat(),
+  [32, 24],
+];
+
+// Snell, worked out from the line's end back to the line (so it draws in tying order): the
+// end along the shank and through the eye, turns down the shank, and the line back up under
+// them and out by the eye.
+const SNELL_TURNS = 6;
+const SNELL_LINE: Point[] = [
+  [57, 2], [58, 12], [55, 30], [53, 50], [53, 70], [55, 77], [59, 76],
+  ...Array.from({ length: SNELL_TURNS }, (_, i): Point[] => [[58, 74 - 8 * i], [42, 70 - 8 * i]]).flat(),
+  [52, 26], [50, 15], [47, 8], [41, 11], [44, 23], [46, 35], [47, 55], [47, 72], [47, 86],
+];
+const SNELL_LAST = SNELL_LINE.length - 1;
+/** Reverses a range of points along SNELL_LINE, for the reversed path. */
+const flip = ([a, b]: readonly [number, number]): [number, number] => [SNELL_LAST - b, SNELL_LAST - a];
+const SNELL_BEHIND: [number, number][] = [
+  ...Array.from({ length: SNELL_TURNS - 1 }, (_, i): [number, number] => [8 + 2 * i + 0.05, 9 + 2 * i - 0.05]),
+  [6 + 2 * SNELL_TURNS + 0.05, 7 + 2 * SNELL_TURNS + 0.6] as [number, number],
+].map(flip);
 
 export const KNOTS: Knot[] = [
   {
@@ -318,5 +364,107 @@ export const KNOTS: Knot[] = [
     ],
     tight: { at: [50, 50], scale: [1, 1] },
     tightText: 'Pull the line to tighten.',
+  },
+  {
+    id: 'clinch',
+    tasks: ['hook'],
+    name: 'Improved clinch knot',
+    summary: 'The classic knot for tying a hook or lure to monofilament line.',
+    uses: ['Hooks, lures and swivels on monofilament', 'Light to medium line', 'Quick to tie once your fingers know it'],
+    remember: 'Through the eye, five turns around the line, back through the little loop by the eye, then up through the big loop. That last tuck is the \u201cimproved\u201d part.',
+    width: 2.6,
+    prop: { kind: 'hook', x: 50, y: 70, w: 4.5, h: 18 },
+    ropes: [
+      {
+        points: CLINCH,
+        behind: [[4.6, 5.5]],
+        under: [...around(Array.from({ length: CLINCH_TURNS }, (_, i) => 12 + 4 * i), 0.36), ...around([CLINCH_END + 4.67, CLINCH_END + 9.5], 0.3)],
+      },
+    ],
+    steps: [
+      { at: 9, text: 'Pass the end through the eye of the hook and back up beside the line.' },
+      { at: CLINCH_END - 1, text: 'Wrap the end around the line five times.' },
+      { at: CLINCH_END + 6, text: 'Bring it back down and through the small loop just above the eye.' },
+      { at: CLINCH_END + 11, text: 'Then up through the big loop you just made.' },
+    ],
+    tight: { at: [50, 60], scale: [0.8, 0.55], keep: [[0, 3, 4, 5, 6, 7, 8]] },
+    tightText: 'Wet it, then pull the line so the turns snug down against the eye. Trim the end.',
+  },
+  {
+    id: 'palomar',
+    tasks: ['hook'],
+    name: 'Palomar knot',
+    summary: 'A very strong, simple hook knot, and the one to use with braided line.',
+    uses: ['Braided line, which slips in other knots', 'Hooks and lures with an eye big enough for doubled line', 'A strong knot that\u2019s easy to tie right'],
+    remember: 'Double the line, push the loop through the eye, tie a loose overhand knot, and pass the hook through the loop.',
+    width: 2.4,
+    prop: { kind: 'hook', x: 50, y: 62, w: 4.5, h: 26 },
+    ropes: [
+      {
+        points: [
+          [44, 2], [44, 20], [45, 38], [47, 52], [49.5, 58], [51, 69], [56, 74], [62, 68], [61, 56], [58, 44],
+          [54, 32], [48, 26], [40, 23], [34, 28], [36, 36], [52, 42], [64, 46], [70, 56], [68, 70], [60, 80],
+          [53, 87], [50, 92],
+        ],
+        behind: [[4.6, 5.4], [18.6, 21]],
+        under: [[11, 12], [15.1, 16]],
+        double: { gap: 3.6, eye: 19, eyeGap: 10 },
+      },
+    ],
+    steps: [
+      { at: 6, text: 'Double the line and push the loop through the eye.' },
+      { at: 16, text: 'Tie a loose overhand knot with the loop around the doubled line.' },
+      { at: 21, text: 'Pass the loop over the hook, so it goes around behind it.' },
+    ],
+    tight: { at: [50, 60], scale: [0.6, 0.55], keep: [[0, 4, 5]] },
+    tightText: 'Wet it and pull both ends so the loop snugs up around the eye. Trim the end.',
+  },
+  {
+    id: 'uni',
+    tasks: ['hook', 'join'],
+    name: 'Uni knot',
+    summary: 'One knot that ties on a hook and, doubled up, joins two lines.',
+    uses: ['Hooks, lures and swivels on any kind of line', 'Joining two lines: a uni knot in each, pulled together', 'Tying line onto a reel'],
+    remember: 'Through the eye, lay the end back along the line, make a loop, and wrap through the loop five or six times around both lines.',
+    width: 2.6,
+    prop: { kind: 'hook', x: 51, y: 68, w: 4.5, h: 18 },
+    ropes: [
+      {
+        points: UNI,
+        behind: [[3.6, 4.4]],
+        under: Array.from({ length: UNI_TURNS }, (_, i): [number, number] => [16 + 2 * i + 0.17, 16 + 2 * i + 0.78]),
+      },
+    ],
+    steps: [
+      { at: 9, text: 'Pass the end through the eye and lay it back up beside the line.' },
+      { at: 15, text: 'Bring it over and down, making a loop beside the two lines.' },
+      { at: UNI.length - 1, text: 'Wrap the end around both lines, inside the loop, five or six times.' },
+    ],
+    tight: { at: [50, 50], scale: [0.7, 0.6], keep: [[0, 3, 4, 5, 6]] },
+    tightText: 'Wet it and pull the end to snug the turns, then pull the line to slide the knot down to the eye. Trim the end.',
+  },
+  {
+    id: 'snell',
+    tasks: ['hook'],
+    name: 'Snell knot',
+    summary: 'Wraps the line around the hook\u2019s shank so it pulls straight along the hook.',
+    uses: ['Bait hooks, especially ones with turned-up or turned-down eyes', 'Circle hooks, where a straight pull helps them set', 'Tying hooks onto leaders before a trip'],
+    remember: 'The end lies along the shank, the turns go around the shank and the end from the eye down, and the line comes out by the eye.',
+    width: 2.6,
+    prop: { kind: 'hook', x: 50, y: 18, w: 4.5, h: 63 },
+    ropes: [
+      {
+        points: [...SNELL_LINE].reverse(),
+        behind: SNELL_BEHIND,
+        under: [flip([2.1, 6.95])],
+      },
+    ],
+    steps: [
+      { at: SNELL_LAST - 19, text: 'Lay the end along the shank and pass it through the eye.' },
+      { at: SNELL_LAST - 7, text: 'Wrap the line around the shank and the end, from the eye down toward the bend: six turns.' },
+      { at: SNELL_LAST, text: 'Pull the line: the rest of the loop slides up under the turns and out by the eye.' },
+    ],
+    tight: { at: [50, 50], scale: [0.7, 1], keep: [[0, SNELL_LAST - 1, SNELL_LAST]] },
+    tightText: 'Wet it and pull the line and the end so the turns bed down. The line now pulls straight along the hook.',
   },
 ];
