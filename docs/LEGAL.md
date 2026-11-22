@@ -10,3 +10,8 @@ Conservative guidelines, not legal advice.
   checks them; `scripts/check-licenses.mjs` lists the allowed ones). The app ships no
   third-party code at run time other than the service worker Workbox generates (MIT).
 - **Names**: knot names are generic. No product names or logos.
+- **Safety**: the About page tells people to practice and check knots, not to rely on the
+  app alone for climbing, rescue or lifting, and that the app comes without warranty. Keep
+  that note if the About page changes.
+- **About page** (`src/about.ts`) must stay in step with `LICENSE` and
+  `public/THIRD_PARTY_NOTICES.txt`.

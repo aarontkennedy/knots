@@ -33,6 +33,12 @@ describe('the list', () => {
     expect(document.title).toBe('Knots');
   });
 
+  it('has Settings and About buttons, named for screen readers', () => {
+    stop = startApp(root());
+    expect($('[aria-label="Settings"]').getAttribute('href')).toBe('#/settings');
+    expect($('[aria-label="About"]').getAttribute('href')).toBe('#/about');
+  });
+
   it('is where an unknown address goes', () => {
     location.hash = '#/k/nope';
     stop = startApp(root());
@@ -126,6 +132,31 @@ describe('a knot page', () => {
     expect(count()).toBe('Step 4 of 4: pull tight');
     click('[data-restart]');
     expect(count()).toBe('Step 1 of 4');
+  });
+});
+
+describe('Settings and About', () => {
+  it('chooses light or dark, showing the choice', () => {
+    stop = startApp(root());
+    go('#/settings');
+    expect($('h1').textContent).toBe('Settings');
+    expect(document.title).toBe('Settings - Knots');
+    expect($('[data-appearance="auto"]').getAttribute('aria-pressed')).toBe('true');
+    click('[data-appearance="dark"]');
+    expect(document.documentElement.dataset.theme).toBe('dark');
+    expect($('[data-appearance="dark"]').getAttribute('aria-pressed')).toBe('true');
+    expect($('[data-appearance="auto"]').getAttribute('aria-pressed')).toBe('false');
+    click('[data-appearance="auto"]');
+    expect(document.documentElement.dataset.theme).toBeUndefined();
+    expect($('.back-icon').getAttribute('href')).toBe('#/');
+  });
+
+  it('shows the About page', () => {
+    stop = startApp(root());
+    go('#/about');
+    expect($('h1').textContent).toBe('About');
+    expect(document.title).toBe('About - Knots');
+    expect($('.about').textContent).toContain('Add it to your phone');
   });
 });
 

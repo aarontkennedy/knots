@@ -12,6 +12,18 @@
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
     <link rel="icon" type="image/png" href="icons/icon-192.png" />
     <title>Knots</title>
+    <script>
+      // The Appearance choice (Settings), applied before anything draws so the screen
+      // never flashes the wrong colors. Same key and values as src/theme.ts.
+      try {
+        var choice = localStorage.getItem('knots:appearance');
+        if (choice === 'light' || choice === 'dark') {
+          document.documentElement.dataset.theme = choice;
+          var bar = choice === 'dark' ? '#0e1312' : '#f3f5f4';
+          document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) { m.content = bar; });
+        }
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <noscript><p style="font: 20px/1.4 system-ui, sans-serif; padding: 16px">Knots needs JavaScript. Turn it on in your browser’s settings, then reload this page.</p></noscript>

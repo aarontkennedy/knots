@@ -3,6 +3,9 @@
 import { KNOTS, type Knot } from './knots';
 import { knotSvg } from './draw';
 import { frameAt, run, timeline, type Segment } from './player';
+import { mountAbout } from './about';
+import { BACK_ICON, GEAR_ICON, INFO_ICON } from './icons';
+import { getAppearance, setAppearance, type Appearance } from './theme';
 
 export type Mode = 'step' | 'play';
 const MODE_KEY = 'knots:mode';
@@ -28,7 +31,11 @@ const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 const CHEVRON = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>';
 
 function homeHtml(): string {
-  return `<header class="topbar"><h1>Knots</h1></header>
+  return `<header class="topbar">
+  <h1>Knots</h1>
+  <a class="top-action top-icon" href="#/settings" aria-label="Settings">${GEAR_ICON}</a>
+  <a class="top-action top-icon" href="#/about" aria-label="About">${INFO_ICON}</a>
+</header>
 <main class="page">
   <p class="intro">Ten useful knots: what each is for, how to remember it, and how to tie it.</p>
   <ul class="knot-list">${KNOTS.map(
@@ -36,6 +43,37 @@ function homeHtml(): string {
   ).join('')}</ul>
   <p class="footnote">Works offline. The drawings are this app’s own.</p>
 </main>`;
+}
+
+/** A page under the list (About, Settings): back arrow, centered title. */
+const subHeader = (title: string) =>
+  `<header class="topbar sub"><a class="back-icon top-icon" href="#/" aria-label="Back to knots">${BACK_ICON}</a><h1>${title}</h1></header>`;
+
+function showAbout(root: HTMLElement): void {
+  root.innerHTML = `${subHeader('About')}<main class="page prose about"></main>`;
+  mountAbout(root.querySelector<HTMLElement>('.about')!);
+}
+
+function showSettings(root: HTMLElement): void {
+  const choices: [Appearance, string][] = [['auto', 'Automatic'], ['light', 'Light'], ['dark', 'Dark']];
+  const now = getAppearance();
+  root.innerHTML = `${subHeader('Settings')}
+<main class="page">
+  <section class="setting">
+    <h2>Appearance</h2>
+    <div class="segmented" role="group" aria-label="Appearance">${choices
+      .map(([id, label]) => `<button type="button" data-appearance="${id}" aria-pressed="${id === now}">${label}</button>`)
+      .join('')}</div>
+    <p class="setting-note">Automatic follows your phone’s light or dark mode.</p>
+  </section>
+</main>`;
+  const buttons = root.querySelectorAll<HTMLButtonElement>('[data-appearance]');
+  buttons.forEach((btn) =>
+    btn.addEventListener('click', () => {
+      setAppearance(btn.dataset.appearance as Appearance);
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+    }),
+  );
 }
 
 function knotHtml(k: Knot, mode: Mode): string {
@@ -168,6 +206,12 @@ export function startApp(root: HTMLElement): () => void {
     if (knot) {
       document.title = `${knot.name} - Knots`;
       page = new KnotPage(root, knot, getMode());
+    } else if (location.hash === '#/about') {
+      document.title = 'About - Knots';
+      showAbout(root);
+    } else if (location.hash === '#/settings') {
+      document.title = 'Settings - Knots';
+      showSettings(root);
     } else {
       document.title = 'Knots';
       root.innerHTML = homeHtml();
