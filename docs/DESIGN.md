@@ -24,8 +24,24 @@ passing over another shows a gap either side.
   each knot's over-and-under pattern so a change to the points can't quietly break one. A
   figure-eight, for example, must alternate over, under all the way along.
 
+## In use
+
+Each knot also has a zoomed-out scene showing where it's used (`src/scenes.ts`): firewood
+for the square knot, a dock post for the bowline, a canoe on a roof rack for the trucker's
+hitch, a fishing line for the hook knots, and so on. The knot's own drawing is placed into
+the scene, scaled, and turned or mirrored if need be (a mirrored knot is the same knot tied
+the other way round), so its crossings stay exactly as drawn and checked. Rope from the
+scene (to the boat, the tent, the rod) joins the knot's rope end smoothly along its own
+direction, and is drawn at the knot's scale so the outlines match. A scene can end with one
+more beat once the knot is tight: the figure-eight slides up against the pulley block it
+stops. Scene colors are fixed illustration colors (`.s-*` in `style.css`), like the green
+board.
+
+`dev.html?scene=<id>` shows a scene part-laid, laid, pulled tight and at work.
+
 ## Watching
 
 Step by step is the default: Back, Again and Next. Play through runs every step with a
-pause between, and can be paused. The choice is remembered. With the phone set to reduce
-motion, each step shows finished without animating.
+pause between, and can be paused. In use plays the same steps in the knot's scene. The
+choice is remembered. With the phone set to reduce motion, each step shows finished
+without animating.

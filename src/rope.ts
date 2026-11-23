@@ -22,6 +22,8 @@ export interface Rope {
   color?: 'a' | 'b';
   /** This rope's own thickness, when it differs from the knot's. */
   width?: number;
+  /** No dot marking the end (rope that isn't the working end, such as rope leading away). */
+  plainEnd?: boolean;
   /**
    * Rope folded in two (a bight), drawn as two strands `gap` apart with the fold leading.
    * From point `eye` on, the strands spread to `eyeGap` apart, opening into a loop.
@@ -182,7 +184,7 @@ export function ropeSvg(ropes: readonly Rope[], { progress = 1, width = 4, prop 
       split(b, false);
       const end = visible[visible.length - 1];
       runs.push({ z: zOf(end.at), rope: r, order: visible.length - 1, pts: [a[a.length - 2], ...fold, b[b.length - 2]], color, tip: false, width: w });
-    } else split(visible, true);
+    } else split(visible, !rope.plainEnd);
   });
   runs.sort((a, b) => a.z - b.z || a.rope - b.rope || a.order - b.order);
   const d = (pts: { x: number; y: number }[]) => pts.map((q, i) => `${i ? 'L' : 'M'}${q.x.toFixed(2)} ${q.y.toFixed(2)}`).join('');

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { KNOTS } from './knots';
-import { frameAt, MIN_STEP_MS, PAUSE_MS, run, timeline, TIGHT_MS } from './player';
+import { frameAt, MIN_STEP_MS, PAUSE_MS, run, SLIDE_MS, timeline, TIGHT_MS } from './player';
 
 const knot = KNOTS.find((k) => k.id === 'figure8')!;
 
@@ -16,7 +16,7 @@ describe('timeline', () => {
   });
 
   it('lays the rope over each step, then pulls it tight', () => {
-    expect(frameAt(segments, 0)).toEqual({ progress: 0, tight: 0, step: 0 });
+    expect(frameAt(segments, 0)).toEqual({ progress: 0, tight: 0, step: 0, slide: 0 });
     expect(frameAt(segments, segments[0].end)).toMatchObject({ progress: segments[0].to, step: 0 });
     // In the pause, the step stays finished.
     expect(frameAt(segments, segments[0].end + PAUSE_MS / 2).progress).toBe(segments[0].to);
@@ -24,7 +24,19 @@ describe('timeline', () => {
     const last = segments.at(-1)!;
     expect(frameAt(segments, last.start + TIGHT_MS / 4).tight).toBeLessThan(0.5);
     expect(frameAt(segments, last.start + (TIGHT_MS * 3) / 4).tight).toBeGreaterThan(0.5);
-    expect(frameAt(segments, total)).toEqual({ progress: 1, tight: 1, step: last.step });
+    expect(frameAt(segments, total)).toEqual({ progress: 1, tight: 1, step: last.step, slide: 0 });
+  });
+});
+
+describe('the in-use timeline', () => {
+  it('can end with one more beat, the knot at work, after it\u2019s tight', () => {
+    const plain = timeline(knot);
+    const { segments, total } = timeline(knot, true);
+    expect(total).toBe(plain.total + PAUSE_MS / 2 + SLIDE_MS);
+    const last = segments.at(-1)!;
+    expect(last).toMatchObject({ slide: true, step: knot.steps.length });
+    expect(frameAt(segments, last.start + SLIDE_MS / 2)).toMatchObject({ progress: 1, tight: 1, slide: 0.5 });
+    expect(frameAt(segments, total).slide).toBe(1);
   });
 });
 

@@ -342,7 +342,7 @@ body {
 
 .mode {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   padding: var(--space-1);
   gap: var(--space-1);
   border-radius: var(--radius-pill);
@@ -352,6 +352,8 @@ body {
 
 .mode button {
   min-height: var(--tap);
+  padding: 0 var(--space-1);
+  line-height: 1.15;
   border: 0;
   border-radius: var(--radius-pill);
   background: transparent;
@@ -524,3 +526,52 @@ a {
   color: var(--muted);
   font-size: var(--text-sm);
 }
+
+/* --- "In use" scenes: flat illustration colors, the same in light and dark --- */
+
+.s-sky { fill: #cfe8f3; }
+.s-water { fill: #4d93bf; }
+.s-deep { fill: #2f6f94; }
+.s-ripple, .s-surface, .s-ring, .s-crack, .s-biner, .s-plank, .s-weed, .s-rod, .s-strop, .s-bark-line, .s-grass-line {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.s-ripple { stroke: #8cc3e0; stroke-width: 0.8; }
+.s-surface { stroke: #cfe8f3; stroke-width: 1; }
+.s-bark { fill: #7a5232; }
+.s-wood { fill: #d9a86c; }
+.s-ring { stroke: #a8743f; stroke-width: 0.7; }
+.s-fish { fill: #e08a3c; }
+.s-eye { fill: #222; }
+.s-weed { stroke: #3f8a4f; stroke-width: 1.6; }
+.s-rod { stroke: #5a4632; stroke-width: 1.4; }
+.s-floor { fill: #efe4cf; }
+.s-shadow { fill: #d8c9ab; }
+.s-deck { fill: #b98552; }
+.s-plank { stroke: #8a5a32; stroke-width: 0.6; }
+.s-boat, .s-sail { fill: #f4f1ea; stroke: #b7b2a6; stroke-width: 0.8; }
+.s-metal { fill: #9aa3ab; }
+.s-post, .s-wood-dark { fill: #8a5a32; }
+.s-canoe { fill: #c8553d; }
+.s-grass { fill: #79b05a; }
+.s-leaf { fill: #4e9a52; }
+.s-canvas { fill: #e6a23c; }
+.s-canvas-dark { fill: #c47f22; }
+.s-trunk { fill: #7a5232; }
+.s-bark-line { stroke: #5b3b22; stroke-width: 1.2; }
+.s-block { fill: #6b4a2e; }
+.s-sheave { fill: #c9cfd4; }
+.s-strop { stroke: #6b4a2e; stroke-width: 2; }
+.s-rock { fill: #b8b2a7; }
+.s-crack { stroke: #8f897d; stroke-width: 1; }
+.s-biner { stroke: #d0d6db; stroke-width: 1.6; }
+.s-pack { fill: #4f7a4a; }
+.s-pack-flap { fill: #3f6a3a; }
+.s-wedge { fill: #9aa3ab; }
+.s-ground { fill: #8b6b47; }
+.s-grass-line { stroke: #5d8f45; stroke-width: 1.2; }
+.s-road { fill: #6b6f73; }
+.s-car { fill: #4a78b5; }
+.s-window { fill: #cfe8f3; }
+.s-tire { fill: #2b2b2b; }

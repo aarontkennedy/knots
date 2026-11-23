@@ -200,6 +200,31 @@ describe('Settings and About', () => {
   });
 });
 
+describe('in use', () => {
+  it('plays the knot zoomed out where it\u2019s used, and remembers the choice', () => {
+    stop = startApp(root());
+    go('#/k/figure8');
+    click('[data-mode="scene"]');
+    expect(getMode()).toBe('scene');
+    expect($('[data-step-controls]').hidden).toBe(true);
+    expect($('[data-play-controls]').hidden).toBe(false);
+    expect($('[data-count]').textContent).toMatch(/^In use: .*pulley block/);
+    expect($('[data-art] svg').classList.contains('scene-art')).toBe(true);
+    expect($('[data-play]').textContent).toBe('Play again');
+    click('[data-mode="play"]');
+    expect($('[data-count]').textContent).toBe('Step 4 of 4: pull tight');
+    expect($('[data-art] svg').classList.contains('scene-art')).toBe(false);
+  });
+
+  it('opens in use when that was the last choice', () => {
+    localStorage.setItem('knots:mode', 'scene');
+    stop = startApp(root());
+    go('#/k/cleat');
+    expect($('[data-mode="scene"]').getAttribute('aria-pressed')).toBe('true');
+    expect($('[data-count]').textContent).toBe('In use: A boat tied up to a cleat on the dock.');
+  });
+});
+
 describe('getMode', () => {
   it('defaults to step by step, even when storage is blocked', () => {
     expect(getMode()).toBe('step');

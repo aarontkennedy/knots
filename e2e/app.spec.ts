@@ -70,3 +70,17 @@ test('Share offers text and email when the browser has no share sheet', async ({
   await expect(page.getByRole('link', { name: 'Send an email' })).toHaveAttribute('href', /^mailto:/);
   expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
 });
+
+test('In use plays the knot zoomed out in its setting, on every knot page', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('./#/k/square');
+  await page.getByRole('button', { name: 'In use' }).click();
+  await expect(page.locator('[data-count]')).toHaveText('In use: Tying up a bundle of firewood.');
+  await expect(page.getByRole('button', { name: 'Play again' })).toBeVisible();
+  for (const id of ['bowline', 'trucker', 'snell']) {
+    await page.goto(`./#/k/${id}`);
+    await expect(page.locator('.scene-art')).toBeVisible();
+    await expect(page.locator('[data-count]')).toHaveText(/^In use: /);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
+  }
+});

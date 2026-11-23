@@ -1,19 +1,22 @@
-// The app: a list of knots, and a page for each that shows how to tie it, step by step or
-// played straight through (the choice is remembered), what it's for and how to remember it.
+// The app: a list of knots, and a page for each that shows how to tie it (step by step,
+// played straight through, or played zoomed out where it's used: the choice is remembered),
+// what it's for and how to remember it.
 import { KNOTS, TASKS, type Knot, type Task } from './knots';
 import { knotSvg } from './draw';
+import { SCENES, sceneSvg } from './scenes';
 import { frameAt, run, timeline, type Segment } from './player';
 import { mountAbout } from './about';
 import { BACK_ICON, GEAR_ICON, INFO_ICON, SHARE_ICON } from './icons';
 import { openShareSheet, shareLinks } from './share';
 import { getAppearance, setAppearance, type Appearance } from './theme';
 
-export type Mode = 'step' | 'play';
+export type Mode = 'step' | 'play' | 'scene';
 const MODE_KEY = 'knots:mode';
 
 export function getMode(): Mode {
   try {
-    return localStorage.getItem(MODE_KEY) === 'play' ? 'play' : 'step';
+    const saved = localStorage.getItem(MODE_KEY);
+    return saved === 'play' || saved === 'scene' ? saved : 'step';
   } catch {
     return 'step';
   }
@@ -123,9 +126,10 @@ function knotHtml(k: Knot, mode: Mode): string {
   <h1>${esc(k.name)}</h1>
   <p class="summary">${esc(k.summary)}</p>
   <div class="art" data-art></div>
-  <div class="mode" role="group" aria-label="How to show the steps">
+  <div class="mode" role="group" aria-label="How to show it">
     <button type="button" data-mode="step" aria-pressed="${mode === 'step'}">Step by step</button>
     <button type="button" data-mode="play" aria-pressed="${mode === 'play'}">Play through</button>
+    <button type="button" data-mode="scene" aria-pressed="${mode === 'scene'}">In use</button>
   </div>
   <p class="step-count" data-count></p>
   <p class="caption" data-caption aria-live="polite"></p>
@@ -134,7 +138,7 @@ function knotHtml(k: Knot, mode: Mode): string {
     <button type="button" data-again>Again</button>
     <button type="button" class="primary" data-next>Next</button>
   </div>
-  <div class="controls" data-play-controls${mode === 'play' ? '' : ' hidden'}>
+  <div class="controls" data-play-controls${mode === 'step' ? ' hidden' : ''}>
     <button type="button" data-restart>Start over</button>
     <button type="button" class="primary" data-play>Pause</button>
   </div>
@@ -158,7 +162,7 @@ class KnotPage {
     private readonly knot: Knot,
     private mode: Mode,
   ) {
-    ({ segments: this.segments, total: this.total } = timeline(knot));
+    ({ segments: this.segments, total: this.total } = this.timeline());
     root.innerHTML = knotHtml(knot, mode);
     this.q('[data-next]').addEventListener('click', () => this.showStep(this.step + 1));
     this.q('[data-back]').addEventListener('click', () => this.showStep(this.step - 1));
@@ -170,8 +174,14 @@ class KnotPage {
     else this.play(0);
   }
 
+  /** The steps, and pulling tight. */
   private get steps() {
-    return this.segments.length;
+    return this.knot.steps.length + 1;
+  }
+
+  /** The timeline for the current mode: "in use" may end with the knot at work. */
+  private timeline() {
+    return timeline(this.knot, this.mode === 'scene' && !!SCENES[this.knot.id].slide);
   }
 
   private caption(step: number): string {
@@ -181,13 +191,19 @@ class KnotPage {
   private draw(t: number): void {
     this.t = t;
     const f = frameAt(this.segments, t);
-    this.q('[data-art]').innerHTML = knotSvg(this.knot, f.progress, f.tight);
+    this.q('[data-art]').innerHTML =
+      this.mode === 'scene' ? sceneSvg(this.knot, SCENES[this.knot.id], f.progress, f.tight, f.slide) : knotSvg(this.knot, f.progress, f.tight);
     if (f.step !== this.step || !this.q('[data-caption]').textContent) this.setStep(f.step);
   }
 
   private setStep(step: number): void {
     this.step = step;
-    this.q('[data-count]').textContent = step === this.steps - 1 ? `Step ${step + 1} of ${this.steps}: pull tight` : `Step ${step + 1} of ${this.steps}`;
+    this.q('[data-count]').textContent =
+      this.mode === 'scene'
+        ? `In use: ${SCENES[this.knot.id].caption}`
+        : step === this.steps - 1
+          ? `Step ${step + 1} of ${this.steps}: pull tight`
+          : `Step ${step + 1} of ${this.steps}`;
     this.q('[data-caption]').textContent = this.caption(step);
     this.q<HTMLButtonElement>('[data-back]').disabled = step === 0;
     this.q<HTMLButtonElement>('[data-next]').disabled = step === this.steps - 1;
@@ -224,11 +240,13 @@ class KnotPage {
     setMode(mode);
     this.root.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mode === mode)));
     this.q('[data-step-controls]').hidden = mode !== 'step';
-    this.q('[data-play-controls]').hidden = mode !== 'play';
-    if (mode === 'step') {
-      this.pause();
-      this.showStep(this.step);
-    } else this.play(this.segments[this.step].start);
+    this.q('[data-play-controls]').hidden = mode === 'step';
+    this.pause();
+    ({ segments: this.segments, total: this.total } = this.timeline());
+    const step = this.step;
+    this.step = -1; // so the step line is redrawn for the new mode
+    if (mode === 'step') this.showStep(step);
+    else this.play(mode === 'scene' ? 0 : this.segments[step].start);
   }
 
   destroy(): void {
