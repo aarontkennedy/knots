@@ -55,17 +55,25 @@ function homeHtml(): string {
     .map((t) => `<button type="button" class="chip" data-filter="${t.id}" aria-pressed="${t.id === filter}">${t.label}</button>`)
     .join('')}</div>
   <ul class="knot-list">${KNOTS.map(
-    (k) => `<li data-tasks="${k.tasks.join(' ')}"><a class="knot-card" href="#/k/${k.id}">${knotSvg(k, 1, 1)}<span class="knot-card-text"><span class="knot-card-name">${esc(k.name)}</span><span class="knot-card-summary">${esc(k.summary)}</span></span></a></li>`,
+    (k) => `<li data-knot="${k.id}"><a class="knot-card" href="#/k/${k.id}">${knotSvg(k, 1, 1)}<span class="knot-card-text"><span class="knot-card-name">${esc(k.name)}</span><span class="knot-card-summary">${esc(k.summary)}</span></span></a></li>`,
   ).join('')}</ul>
 </main>`;
 }
 
-/** Shows only the knots for the chosen job. */
+/**
+ * Shows only the knots for the chosen job, easiest first (otherwise in the list's order).
+ * All shows every knot in the list's order.
+ */
 function applyFilter(root: HTMLElement): void {
   root.querySelectorAll<HTMLElement>('[data-filter]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.filter === filter)));
-  root.querySelectorAll<HTMLElement>('[data-tasks]').forEach((li) => {
-    li.hidden = filter !== 'all' && !li.dataset.tasks!.split(' ').includes(filter);
-  });
+  const list = root.querySelector<HTMLElement>('.knot-list')!;
+  const items = KNOTS.map((k) => list.querySelector<HTMLElement>(`[data-knot="${k.id}"]`)!);
+  const level = (i: number) => (filter === 'all' ? 0 : KNOTS[i].level);
+  const order = items.map((_, i) => i).sort((a, b) => level(a) - level(b) || a - b);
+  for (const i of order) {
+    items[i].hidden = filter !== 'all' && !KNOTS[i].tasks.includes(filter);
+    list.append(items[i]);
+  }
 }
 
 /** Share: the phone's share sheet, or text and email links where there isn't one. */

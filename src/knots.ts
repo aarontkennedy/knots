@@ -43,6 +43,11 @@ export interface Knot {
   name: string;
   /** The jobs it's good for (TASKS). */
   tasks: Task[];
+  /**
+   * How hard it is to tie: 1 easy, 2 medium, 3 hard. Not shown; a filtered list puts the
+   * easiest knots for the job first.
+   */
+  level: 1 | 2 | 3;
   /** One line: what it does. */
   summary: string;
   uses: string[];
@@ -118,6 +123,7 @@ export const KNOTS: Knot[] = [
   {
     id: 'square',
     tasks: ['join', 'bundle'],
+    level: 1,
     name: 'Square knot',
     summary: 'Ties two ends together snugly around something, like a bundle or a bandage.',
     uses: ['Tying up a bundle, a bag or a sail', 'Finishing a bandage or sling', 'Tying shoelaces (the bow is a square knot with loops)'],
@@ -141,6 +147,7 @@ export const KNOTS: Knot[] = [
   {
     id: 'bowline',
     tasks: ['tie', 'loop'],
+    level: 2,
     name: 'Bowline',
     summary: 'A fixed loop in the end of a rope that won’t slip, and unties easily afterwards.',
     uses: ['A loop to drop over a post or a cleat', 'Tying a rope around a tree or a person', 'Tying a line to a ring or a mooring'],
@@ -167,6 +174,7 @@ export const KNOTS: Knot[] = [
   {
     id: 'clove',
     tasks: ['tie', 'bundle'],
+    level: 1,
     name: 'Clove hitch',
     summary: 'A quick hitch around a post or rail that’s easy to adjust.',
     uses: ['Tying a boat to a post for a short stop', 'Starting a lashing on a pole', 'Hanging something from a rail'],
@@ -190,6 +198,7 @@ export const KNOTS: Knot[] = [
   {
     id: 'halfhitches',
     tasks: ['tie', 'load'],
+    level: 1,
     name: 'Two half hitches',
     summary: 'Ties a rope to a ring, post or rail, quickly and securely.',
     uses: ['Tying a line to a ring or a tree', 'Hanging a tarp or a bear bag', 'Finishing off other knots, like the trucker’s hitch'],
@@ -217,6 +226,7 @@ export const KNOTS: Knot[] = [
   {
     id: 'figure8',
     tasks: ['stop'],
+    level: 1,
     name: 'Figure-eight stopper',
     summary: 'A chunky knot in the end of a rope that stops it slipping through a hole.',
     uses: ['Stopping a rope pulling out of a pulley, cleat or grommet', 'The end of a sheet or halyard on a boat', 'A quick knot you can always untie'],
@@ -233,6 +243,7 @@ export const KNOTS: Knot[] = [
   {
     id: 'figure8loop',
     tasks: ['loop'],
+    level: 1,
     name: 'Figure-eight loop',
     summary: 'A strong fixed loop that’s easy to check by eye.',
     uses: ['Clipping a rope to a carabiner', 'A loop to hang a bag or a pulley from', 'Climbing (the follow-through version)'],
@@ -257,6 +268,7 @@ export const KNOTS: Knot[] = [
   {
     id: 'sheetbend',
     tasks: ['join'],
+    level: 1,
     name: 'Sheet bend',
     summary: 'Joins two ropes, even of different thicknesses.',
     uses: ['Making a rope longer with another one', 'Joining a thin line to a thick one', 'Tying a rope to the corner of a tarp'],
@@ -286,6 +298,7 @@ export const KNOTS: Knot[] = [
   {
     id: 'tautline',
     tasks: ['tie', 'tighten'],
+    level: 2,
     name: 'Taut-line hitch',
     summary: 'A loop that slides to tighten a line, then holds.',
     uses: ['Tent and tarp guy lines', 'A clothesline you can tighten', 'Tying down a load, then adjusting it'],
@@ -314,6 +327,7 @@ export const KNOTS: Knot[] = [
   {
     id: 'trucker',
     tasks: ['tighten', 'load'],
+    level: 3,
     name: 'Trucker’s hitch',
     summary: 'A rope pulley for pulling a line really tight, then tying it off.',
     uses: ['Tying a canoe or a load onto a roof rack', 'Pulling a ridge line tight for a tarp', 'Tying down a load in a trailer'],
@@ -346,6 +360,7 @@ export const KNOTS: Knot[] = [
   {
     id: 'cleat',
     tasks: ['tie'],
+    level: 1,
     name: 'Cleat hitch',
     summary: 'Ties a boat’s line to a cleat on a dock, quick to tie and untie.',
     uses: ['Tying up a boat at a dock', 'Tying off a halyard or sheet on a boat', 'Tying a canoe line to a cleat'],
@@ -373,6 +388,7 @@ export const KNOTS: Knot[] = [
   {
     id: 'roundturn',
     tasks: ['tie', 'load'],
+    level: 1,
     name: 'Round turn and two half hitches',
     summary: 'Ties a line to a post, tree or ring so it holds hard pulls and still unties.',
     uses: ['Tying a canoe’s painter to a tree or a ring', 'A bear bag line or a hammock strap to a tree', 'Tying off a line that’s already pulling: the turns take the strain while you tie'],
@@ -400,6 +416,7 @@ export const KNOTS: Knot[] = [
   {
     id: 'anchor',
     tasks: ['tie', 'load'],
+    level: 2,
     name: 'Anchor bend',
     summary: 'Ties a line to a ring so it holds even when it jerks and slackens, like an anchor line.',
     uses: ['Tying a line to an anchor’s ring', 'Tying a canoe or boat line to a mooring ring', 'Any ring tie that will tug and go slack over and over'],
@@ -429,6 +446,7 @@ export const KNOTS: Knot[] = [
   {
     id: 'timber',
     tasks: ['tie', 'bundle'],
+    level: 1,
     name: 'Timber hitch',
     summary: 'Grips a log or a bundle while you pull, and falls apart when you stop.',
     uses: ['Dragging a log or a bundle of branches', 'Starting a lashing on a pole', 'Lifting or lowering something round, like a tree trunk'],
@@ -456,6 +474,7 @@ export const KNOTS: Knot[] = [
   {
     id: 'rolling',
     tasks: ['grip', 'tie'],
+    level: 2,
     name: 'Rolling hitch',
     summary: 'Ties a line to a pole or another rope so it holds when pulled along it.',
     uses: ['Pulling along a pole or a rope without the knot sliding', 'Taking the strain off a jammed line so you can free it', 'Tying a tarp line to a pole at an angle'],
@@ -485,6 +504,7 @@ export const KNOTS: Knot[] = [
   {
     id: 'prusik',
     tasks: ['grip'],
+    level: 2,
     name: 'Prusik knot',
     summary: 'A loop of cord wrapped around a rope: it slides when you push it and grips when you pull.',
     uses: ['Sliding a tarp along a ridgeline, then having it stay put', 'A handle or hang point you can move along a rope', 'Climbing and rescue (learn those from an instructor)'],
@@ -516,6 +536,7 @@ export const KNOTS: Knot[] = [
   {
     id: 'clinch',
     tasks: ['hook'],
+    level: 1,
     name: 'Improved clinch knot',
     summary: 'The classic knot for tying a hook or lure to monofilament line.',
     uses: ['Hooks, lures and swivels on monofilament', 'Light to medium line', 'Quick to tie once your fingers know it'],
@@ -541,6 +562,7 @@ export const KNOTS: Knot[] = [
   {
     id: 'palomar',
     tasks: ['hook'],
+    level: 1,
     name: 'Palomar knot',
     summary: 'A very strong, simple hook knot, and the one to use with braided line.',
     uses: ['Braided line, which slips in other knots', 'Hooks and lures with an eye big enough for doubled line', 'A strong knot that\u2019s easy to tie right'],
@@ -570,6 +592,7 @@ export const KNOTS: Knot[] = [
   {
     id: 'uni',
     tasks: ['hook', 'join'],
+    level: 2,
     name: 'Uni knot',
     summary: 'One knot that ties on a hook and, doubled up, joins two lines.',
     uses: ['Hooks, lures and swivels on any kind of line', 'Joining two lines: a uni knot in each, pulled together', 'Tying line onto a reel'],
@@ -594,6 +617,7 @@ export const KNOTS: Knot[] = [
   {
     id: 'snell',
     tasks: ['hook'],
+    level: 3,
     name: 'Snell knot',
     summary: 'Wraps the line around the hook\u2019s shank so it pulls straight along the hook.',
     uses: ['Bait hooks, especially ones with turned-up or turned-down eyes', 'Circle hooks, where a straight pull helps them set', 'Tying hooks onto leaders before a trip'],

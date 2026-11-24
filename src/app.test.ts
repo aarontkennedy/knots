@@ -42,13 +42,20 @@ describe('the list', () => {
     expect($('[data-filter="all"]').getAttribute('aria-pressed')).toBe('true');
     click('[data-filter="join"]');
     expect(shown()).toEqual(['Square knot', 'Sheet bend', 'Uni knot']);
+    // The easiest knots for the job come first.
+    click('[data-filter="tie"]');
+    expect(shown()).toEqual([
+      'Clove hitch', 'Two half hitches', 'Cleat hitch', 'Round turn and two half hitches', 'Timber hitch',
+      'Bowline', 'Taut-line hitch', 'Anchor bend', 'Rolling hitch',
+    ]);
+    click('[data-filter="join"]');
     expect($('[data-filter="join"]').getAttribute('aria-pressed')).toBe('true');
     expect($('[data-filter="all"]').getAttribute('aria-pressed')).toBe('false');
     go('#/k/square');
     go('#/');
     expect(shown()).toHaveLength(3);
     click('[data-filter="all"]');
-    expect(shown()).toHaveLength(KNOTS.length);
+    expect(shown()).toEqual(KNOTS.map((k) => k.name));
   });
 
   it('offers text and email links when the phone has no share sheet', async () => {

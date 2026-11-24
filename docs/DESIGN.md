@@ -51,3 +51,9 @@ play on from that step), and the middle one is Again when stepping, or Pause, Pl
 Play again when playing. The
 choice is remembered. With the phone set to reduce motion, each step shows finished
 without animating.
+
+## The list
+
+The chips at the top narrow the list to knots for one job. Each knot has a `level` (1 easy,
+2 medium, 3 hard) that isn't shown: a narrowed list puts the easiest knots first, keeping the
+list's order among knots of the same level. All shows every knot in the list's order.
