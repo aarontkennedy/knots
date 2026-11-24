@@ -18,7 +18,7 @@ function pattern(k: Knot, rope = 0): string {
 const knot = (id: string) => KNOTS.find((k) => k.id === id)!;
 
 describe('the knots', () => {
-  it('are the everyday ten, then the fishing knots', () => {
+  it('are the everyday ten, the camping and canoeing knots, then the fishing knots', () => {
     expect(KNOTS.map((k) => k.name)).toEqual([
       'Square knot',
       'Bowline',
@@ -30,6 +30,11 @@ describe('the knots', () => {
       'Taut-line hitch',
       'Trucker’s hitch',
       'Cleat hitch',
+      'Round turn and two half hitches',
+      'Anchor bend',
+      'Timber hitch',
+      'Rolling hitch',
+      'Prusik knot',
       'Improved clinch knot',
       'Palomar knot',
       'Uni knot',
@@ -89,6 +94,19 @@ describe('crossings', () => {
     expect(pattern(knot('tautline'))).toBe('UOUOUOUOUOUOOOUU');
     expect(pattern(knot('trucker'))).toBe('OUOUOUOUUOOUUO');
     expect(pattern(knot('cleat'))).toBe('UUUUUUOOOOOOUO');
+  });
+
+  it('the camping and canoeing knots', () => {
+    // The same hitches as two half hitches: the round turn only crosses the post.
+    expect(pattern(knot('roundturn'))).toBe(pattern(knot('halfhitches')));
+    // Around the line, then under both turns (but over the piece behind the ring), then a half hitch.
+    expect(pattern(knot('anchor'))).toBe('UOUOOUOOUUOUOOUU');
+    // Around the line, then twists that go over then under their own rope.
+    expect(pattern(knot('timber'))).toBe('UOUOUOUOOUUOUOUO');
+    // Both turns pass inside the line; the end crosses back over and tucks under that crossing.
+    expect(pattern(knot('rolling'))).toBe('OOOOUUUUUUUUOOOOOU');
+    // The loop across the back is behind the wraps; the wraps in front cross over it.
+    expect(pattern(knot('prusik'))).toBe('UUUUUUUUUUUUOOOOOOOOOOOO');
   });
 
   it('the fishing knots: turns go over then under, tucks go through their loops', () => {

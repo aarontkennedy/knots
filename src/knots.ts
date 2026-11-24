@@ -11,8 +11,12 @@ export interface Step {
 
 /** What the knot is tied to, drawn between the rope behind it and the rope in front. */
 export interface Prop {
-  /** For a hook, (x, y) is the middle of the eye, w its radius and h the shank's length. */
-  kind: 'rail' | 'post' | 'cleat' | 'hook';
+  /**
+   * For a hook, (x, y) is the middle of the eye, w its radius and h the shank's length. For a
+   * ring, (x, y) is its middle, w its radius and h the metal's thickness. For a rope, (x, y)
+   * is its left end, w its length and h its thickness.
+   */
+  kind: 'rail' | 'post' | 'cleat' | 'hook' | 'ring' | 'rope';
   x: number;
   y: number;
   w: number;
@@ -28,6 +32,7 @@ export const TASKS = [
   { id: 'load', label: 'Tie down a load' },
   { id: 'stop', label: 'Stop an end slipping' },
   { id: 'bundle', label: 'Tie around a bundle' },
+  { id: 'grip', label: 'Grip a rope or pole' },
   { id: 'hook', label: 'Tie on a fishing hook' },
 ] as const;
 
@@ -364,6 +369,149 @@ export const KNOTS: Knot[] = [
     ],
     tight: { at: [50, 50], scale: [1, 1] },
     tightText: 'Pull the line to tighten.',
+  },
+  {
+    id: 'roundturn',
+    tasks: ['tie', 'load'],
+    name: 'Round turn and two half hitches',
+    summary: 'Ties a line to a post, tree or ring so it holds hard pulls and still unties.',
+    uses: ['Tying a canoe’s painter to a tree or a ring', 'A bear bag line or a hammock strap to a tree', 'Tying off a line that’s already pulling: the turns take the strain while you tie'],
+    remember: 'Two full turns around the post take the pull. Then two half hitches around the line, both the same way.',
+    prop: { kind: 'post', x: 8, y: 14, w: 14, h: 72 },
+    ropes: [
+      {
+        points: [
+          [98, 40], [70, 40], [40, 40], [22, 40], [14, 40], [5, 43], [9, 48], [16, 49], [24, 51], [16, 54],
+          [5, 56], [10, 60], [22, 62], [36, 62], [48, 58], [46, 40], [40, 32], [33, 36], [32, 44], [36, 62],
+          [44, 68], [60, 68], [70, 62], [68, 40], [62, 32], [55, 36], [54, 44], [58, 64], [66, 74], [82, 78],
+        ],
+        behind: [[3.1, 5.6], [8.1, 10.6]],
+        under: [[17.2, 18], [18.6, 19.4], [25.2, 26.2], [26.6, 27.4]],
+      },
+    ],
+    steps: [
+      { at: 12, text: 'Take the end around the post twice: a round turn.' },
+      { at: 20, text: 'Bring it over the line, around behind, and tuck it under itself: one half hitch.' },
+      { at: 29, text: 'Make a second half hitch the same way.' },
+    ],
+    tight: { at: [22, 50], scale: [0.6, 0.8], keep: [[0, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 29]] },
+    tightText: 'Slide the hitches up toward the post and pull to tighten.',
+  },
+  {
+    id: 'anchor',
+    tasks: ['tie', 'load'],
+    name: 'Anchor bend',
+    summary: 'Ties a line to a ring so it holds even when it jerks and slackens, like an anchor line.',
+    uses: ['Tying a line to an anchor’s ring', 'Tying a canoe or boat line to a mooring ring', 'Any ring tie that will tug and go slack over and over'],
+    remember: 'A round turn on the ring, then the end goes around the line and back under both turns, and finishes with a half hitch.',
+    prop: { kind: 'ring', x: -15, y: 50, w: 30, h: 9 },
+    ropes: [
+      {
+        points: [
+          [98, 30], [70, 30], [40, 30], [24, 30], [15, 30], [5, 35], [8, 42], [15, 43], [24, 45], [15, 49],
+          [5, 52], [9, 57], [22, 58], [38, 58], [50, 52], [50, 30], [44, 21], [36, 23], [33, 32], [27, 37],
+          [17, 38], [14, 48], [15, 60], [20, 68], [36, 72], [56, 70], [66, 60], [68, 44], [68, 30], [62, 22],
+          [55, 26], [54, 38], [58, 60], [66, 74], [82, 80],
+        ],
+        behind: [[3.1, 5.6], [8.1, 10.6]],
+        under: [[17.45, 18.05], [20.2, 22.1], [30.1, 30.7], [32.1, 32.75]],
+      },
+    ],
+    steps: [
+      { at: 12, text: 'Take the end around the ring twice: a round turn.' },
+      { at: 18, text: 'Bring it over the line and around behind it.' },
+      { at: 23, text: 'Tuck it back under both turns, between them and the ring.' },
+      { at: 34, text: 'Finish with a half hitch around the line.' },
+    ],
+    tight: { at: [24, 50], scale: [0.6, 0.8], keep: [[0, 3, 4, 5, 6, 7, 8, 9, 10, 11, 34]] },
+    tightText: 'Pull the line to snug the turns down on the ring, then slide the half hitch up.',
+  },
+  {
+    id: 'timber',
+    tasks: ['tie', 'bundle'],
+    name: 'Timber hitch',
+    summary: 'Grips a log or a bundle while you pull, and falls apart when you stop.',
+    uses: ['Dragging a log or a bundle of branches', 'Starting a lashing on a pole', 'Lifting or lowering something round, like a tree trunk'],
+    remember: 'Around the log, around the line, then twist the end around itself three times. The twists hold it; pulling the line locks them.',
+    prop: { kind: 'post', x: 8, y: 14, w: 14, h: 72 },
+    ropes: [
+      {
+        points: [
+          [98, 40], [80, 40], [50, 40], [22, 40], [14, 40], [5, 48], [10, 58], [22, 60], [42, 60], [62, 60],
+          [76, 60], [84, 54], [84, 44], [82, 34], [76, 30], [71, 34], [71, 44], [70, 52], [66, 68], [60, 52],
+          [54, 68], [48, 52], [42, 68], [36, 52], [32, 48],
+        ],
+        behind: [[3.1, 5.6]],
+        under: [[15.3, 15.9], [17.15, 17.75], [19.2, 19.8], [21.2, 21.8]],
+      },
+    ],
+    steps: [
+      { at: 10, text: 'Take the end around the log.' },
+      { at: 17, text: 'Bring it around the line.' },
+      { at: 24, text: 'Twist the end around its own rope three times, working back toward the log.' },
+    ],
+    tight: { at: [22, 50], scale: [0.6, 0.75], keep: [[0, 1, 2, 3, 4, 5, 6]] },
+    tightText: 'Pull the line: the loop grips the log and the twists jam against each other.',
+  },
+  {
+    id: 'rolling',
+    tasks: ['grip', 'tie'],
+    name: 'Rolling hitch',
+    summary: 'Ties a line to a pole or another rope so it holds when pulled along it.',
+    uses: ['Pulling along a pole or a rope without the knot sliding', 'Taking the strain off a jammed line so you can free it', 'Tying a tarp line to a pole at an angle'],
+    remember: 'Two turns toward the pull, each inside the line. Then cross back over and finish like a clove hitch.',
+    prop: { kind: 'rail', x: 4, y: 42, w: 92, h: 16 },
+    ropes: [
+      {
+        points: [
+          [-2, 72], [20, 67], [40, 62.5], [50, 60.5], [53, 54], [53, 44], [55, 37], [50, 48], [45, 60], [43, 66],
+          [40, 58], [38, 44], [35, 37], [31, 50], [27, 62], [25, 67], [22, 58], [21, 44], [25, 37], [40, 46],
+          [55, 56], [66, 64], [69, 66], [71, 56], [71, 44], [68, 37], [63, 44], [59, 53], [56, 62], [55, 76],
+          [55, 96],
+        ],
+        behind: [[3.6, 5.9], [9, 11.9], [15, 17.9], [22, 24.9]],
+        under: [[8, 8.5], [14.2, 14.75], [27.25, 27.85]],
+      },
+    ],
+    steps: [
+      { at: 9, text: 'Take the end around the pole, coming down inside the line (between it and the pole).' },
+      { at: 15, text: 'Go around again beside the first turn, toward the pull, and inside the line again.' },
+      { at: 22, text: 'Cross back over both turns and the line.' },
+      { at: 30, text: 'Go around once more and tuck the end under that crossing, like a clove hitch.' },
+    ],
+    tight: { at: [48, 50], scale: [0.7, 1], keep: [[0, 1, 29, 30]] },
+    tightText: 'Snug it before you load it. Pulled along the pole toward the two turns, it grips.',
+  },
+  {
+    id: 'prusik',
+    tasks: ['grip'],
+    name: 'Prusik knot',
+    summary: 'A loop of cord wrapped around a rope: it slides when you push it and grips when you pull.',
+    uses: ['Sliding a tarp along a ridgeline, then having it stay put', 'A handle or hang point you can move along a rope', 'Climbing and rescue (learn those from an instructor)'],
+    remember: 'Wrap the loop around the rope three times, through itself each time. Keep the wraps neat and side by side.',
+    width: 2.4,
+    prop: { kind: 'rope', x: -2, y: 40, w: 104, h: 4.4 },
+    ropes: [
+      {
+        color: 'b',
+        plainEnd: true,
+        points: [
+          // Starts behind the rope, along the back, so the joins in the loop are out of sight.
+          [17, 39.6], [50, 40], [83, 39.6], [87, 43], [82, 47], [77, 33], [72, 47], [67, 33], [62, 47], [57, 33],
+          [53, 48], [54, 56], [56, 72], [55, 85], [50, 88], [45, 85], [44, 72], [46, 56], [47, 48], [43, 33],
+          [38, 47], [33, 33], [28, 47], [23, 33], [18, 47], [13, 43], [17, 39.6],
+        ],
+        behind: [[0, 4], [5, 6], [7, 8], [9, 10], [18, 19], [20, 21], [22, 23], [24, 26]],
+      },
+    ],
+    steps: [
+      { at: 5, text: 'Lay a loop of cord, thinner than the rope, behind the rope. Bring one end over the front.' },
+      { at: 10, text: 'Wrap it around the rope three times in all, passing through the loop each time.' },
+      { at: 18, text: 'The end comes out of the middle of the wraps: that’s the loop you hang things from.' },
+      { at: 26, text: 'The wraps lie side by side, three either side of the middle, with the loop across the back.' },
+    ],
+    tight: { at: [50, 40], scale: [0.6, 0.8], keep: [[12, 13, 14, 15, 16]] },
+    tightText: 'Snug the wraps tight and neat. Pull the loop and it grips; push the knot itself and it slides.',
   },
   {
     id: 'clinch',

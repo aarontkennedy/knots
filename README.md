@@ -1,6 +1,6 @@
 # Knots
 
-An offline phone web app showing useful knots (ten everyday ones and four fishing knots): what each is for, a way to remember
+An offline phone web app showing useful knots (ten everyday ones, five for camping and canoeing, and four fishing knots): what each is for, a way to remember
 it, and an animation of tying it, step by step or played straight through.
 
 ```

@@ -314,7 +314,9 @@ body {
 }
 
 .hook-edge,
-.hook {
+.hook,
+.ring-edge,
+.ring {
   fill: none;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -328,6 +330,14 @@ body {
 .hook {
   stroke: #c9cfd4;
   stroke-width: 1.8;
+}
+
+.ring-edge {
+  stroke: var(--prop-dark);
+}
+
+.ring {
+  stroke: #c9cfd4;
 }
 
 /* --- Knot page --- */
@@ -575,3 +585,7 @@ a {
 .s-car { fill: #4a78b5; }
 .s-window { fill: #cfe8f3; }
 .s-tire { fill: #2b2b2b; }
+.s-sand { fill: #c9b98a; }
+.s-anchor { fill: #4a4f55; }
+.s-anchor-arm { fill: none; stroke: #4a4f55; stroke-width: 3; stroke-linecap: round; }
+.s-branch { fill: none; stroke: #7a5232; stroke-width: 5; stroke-linecap: round; }

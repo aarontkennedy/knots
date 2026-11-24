@@ -4,6 +4,16 @@ import { between, ropeSvg, tighten, progressAt } from './rope';
 
 /** The post, rail or cleat, flat-shaded. */
 export function propSvg(p: Prop): string {
+  if (p.kind === 'ring') {
+    // A metal ring: (x, y) its middle, w its radius, h the metal's thickness.
+    const c = `cx="${p.x}" cy="${p.y}" r="${p.w}"`;
+    return `<circle class="ring-edge" ${c} stroke-width="${p.h + 1.6}"/><circle class="ring" ${c} stroke-width="${p.h}"/>`;
+  }
+  if (p.kind === 'rope') {
+    // Another rope, straight across: (x, y) its left end, w its length, h its thickness.
+    const d = `M${p.x} ${p.y}H${p.x + p.w}`;
+    return `<path class="rope-edge" d="${d}" stroke-width="${p.h + 1.6}"/><path class="rope-core a" d="${d}" stroke-width="${p.h}"/>`;
+  }
   if (p.kind === 'hook') {
     // A fishing hook hanging from its eye: shank, bend, point and barb. Drawn as a dark
     // outline under a light metal line, so rope passing behind it shows.

@@ -211,6 +211,71 @@ export const SCENES: Record<string, Scene> = {
       circle('s-metal', 16, 76, 1.4),
     leads: [{ from: {}, via: [[16, 75]] }],
   },
+  roundturn: {
+    caption: 'A canoe’s line tied to a tree on the shore.',
+    scale: 0.55,
+    pin: [[15, 50], [16, 46]],
+    back:
+      sky(56) +
+      water(56) +
+      path('s-grass', 'M0 56H44Q52 78 40 100H0Z') +
+      circle('s-leaf', 14, 4, 20) +
+      circle('s-leaf', 32, -2, 14) +
+      path('s-canoe', 'M58 80Q74 72 104 74V86Q76 90 62 86Z') +
+      circle('s-metal', 62, 81, 1.4),
+    prop: rect('s-trunk', 8, -120, 14, 260) + path('s-bark-line', 'M11 -60v30M18 -10v24M12 90v30M17 130v20'),
+    leads: [{ from: {}, via: [[72, 62], [62, 80]] }],
+  },
+  anchor: {
+    caption: 'An anchor line tied to the anchor’s ring.',
+    scale: 0.4,
+    rotate: -90,
+    pin: [[24, 50], [50, 52]],
+    back:
+      sky(10) +
+      rect('s-deep', 0, 10, 100, 90) +
+      path('s-surface', 'M0 10q5 -2 10 0t10 0t10 0t10 0t10 0t10 0t10 0t10 0t10 0t10 0') +
+      path('s-boat', 'M20 2Q22 12 34 13H58Q66 12 70 2Z') +
+      rect('s-sand', 0, 92, 100, 8) +
+      path('s-weed', 'M10 100q-4 -10 2 -18t-2 -16M86 100q-5 -12 1 -22t-1 -14'),
+    front: rect('s-anchor', 48, 79, 4, 16) + rect('s-anchor', 40, 81, 20, 3, 1.5) + path('s-anchor-arm', 'M34 86Q50 102 66 86'),
+    leads: [{ from: {}, via: [[42, 12]] }],
+  },
+  timber: {
+    caption: 'A log lifted on a line: the hitch grips while it pulls.',
+    scale: 0.5,
+    rotate: -90,
+    pin: [[22, 50], [50, 56]],
+    back:
+      sky(80) +
+      rect('s-ground', 0, 80, 100, 20) +
+      path('s-grass-line', 'M0 80H100') +
+      path('s-branch', 'M-4 6Q40 -2 104 10'),
+    prop: rect('s-bark', 8, -20, 14, 140, 6) + path('s-bark-line', 'M12 -6v24M18 24v30M12 70v20M18 96v14'),
+    leads: [{ from: {}, via: [[45, 6]] }],
+  },
+  rolling: {
+    caption: 'A tarp line tied to a pole: it holds against the slanting pull.',
+    scale: 0.5,
+    pin: [[50, 50], [58, 40]],
+    back:
+      sky(70) +
+      rect('s-grass', 0, 70, 100, 30) +
+      rect('s-trunk', 92, 0, 10, 100) +
+      path('s-canvas', 'M-2 60L22 74L-2 100Z') +
+      circle('s-metal', 6, 68, 1.4),
+    prop: rect('s-wood', -100, 42, 300, 16, 3),
+    leads: [{ from: {}, via: [[16, 60], [7, 67]] }],
+  },
+  prusik: {
+    caption: 'A tarp hung from a ridgeline: slide the prusik to move it, and it stays put.',
+    scale: 0.5,
+    pin: [[50, 40], [50, 30]],
+    back: sky(78) + rect('s-grass', 0, 78, 100, 22) + rect('s-trunk', -4, 0, 9, 100) + rect('s-trunk', 95, 0, 9, 100),
+    prop: `<path class="rope-edge" d="M-120 40H220" stroke-width="6"/><path class="rope-core a" d="M-120 40H220" stroke-width="4.4"/>`,
+    front: path('s-canvas', 'M50 52L6 92H94Z') + path('s-canvas-dark', 'M50 52L94 92H86Z') + circle('s-metal', 50, 51, 1.6),
+    leads: [],
+  },
   clinch: {
     caption: 'A hook tied on, ready to fish.',
     scale: 0.55,

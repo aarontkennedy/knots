@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 test('opens a knot from the list and steps through tying it', async ({ page }) => {
   await page.goto('./');
   await expect(page.getByRole('heading', { name: 'Knots', exact: true })).toBeVisible();
-  await expect(page.locator('.knot-card')).toHaveCount(14);
+  await expect(page.locator('.knot-card')).toHaveCount(19);
 
   await page.getByRole('link', { name: /Bowline/ }).click();
   await expect(page.getByRole('heading', { name: 'Bowline' })).toBeVisible();
@@ -19,7 +19,7 @@ test('opens a knot from the list and steps through tying it', async ({ page }) =
   await expect(page.getByRole('button', { name: 'Next' })).toBeDisabled();
 
   await page.getByRole('link', { name: 'All knots' }).click();
-  await expect(page.locator('.knot-card')).toHaveCount(14);
+  await expect(page.locator('.knot-card')).toHaveCount(19);
 });
 
 test('plays straight through, and remembers that choice', async ({ page }) => {
@@ -57,7 +57,7 @@ test('narrows the list to knots for a job', async ({ page }) => {
   await page.getByRole('link', { name: 'All knots' }).click();
   await expect(page.locator('.knot-card:visible')).toHaveCount(3);
   await page.getByRole('button', { name: 'All', exact: true }).click();
-  await expect(page.locator('.knot-card:visible')).toHaveCount(14);
+  await expect(page.locator('.knot-card:visible')).toHaveCount(19);
 });
 
 test('Share offers text and email when the browser has no share sheet', async ({ page }) => {

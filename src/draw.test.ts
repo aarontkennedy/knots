@@ -15,6 +15,15 @@ describe('propSvg', () => {
     expect(cleat).toContain('rx="5"');
     expect(cleat).toContain('prop-base');
   });
+
+  it('draws a ring as a metal circle, and another rope straight across', () => {
+    const ring = propSvg({ kind: 'ring', x: -15, y: 50, w: 30, h: 9 });
+    expect(ring).toContain('class="ring-edge" cx="-15" cy="50" r="30" stroke-width="10.6"');
+    expect(ring).toContain('class="ring"');
+    const rope = propSvg({ kind: 'rope', x: -2, y: 40, w: 104, h: 4.4 });
+    expect(rope).toContain('d="M-2 40H102"');
+    expect(rope).toContain('class="rope-core a"');
+  });
 });
 
 describe('knotSvg', () => {
@@ -23,7 +32,8 @@ describe('knotSvg', () => {
     const tight = knotSvg(k, 0, 1);
     expect(tight).toContain('rope-core');
     expect(tight).not.toContain('NaN');
-    if (k.prop) expect(tight).toMatch(k.prop.kind === 'hook' ? /class="hook"/ : /class="prop"/);
+    const looks = { hook: /class="hook"/, ring: /class="ring"/, rope: /M-?\d+ \d+H/ } as Record<string, RegExp>;
+    if (k.prop) expect(tight).toMatch(looks[k.prop.kind] ?? /class="prop"/);
   });
 
   it('is hidden from screen readers (the caption says what it shows)', () => {

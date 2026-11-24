@@ -19,6 +19,9 @@ passing over another shows a gap either side.
 - **Two ropes** (square knot, sheet bend) are drawn one after the other in two colors; a rope
   can have its own thickness. **Doubled rope** (figure-eight loop) is drawn as two strands
   with a fold leading, opening into the loop at the end.
+- **What it's tied to.** A post, rail, cleat, hook, ring (anchor bend) or another rope
+  (prusik). A closed loop of cord (prusik) starts and ends hidden behind the rope it's
+  wrapped on, so the join never shows.
 - **Checking a knot.** Which piece goes over at each crossing is what makes a knot that knot
   and not another. `crossings()` lists them; `dev.html` marks them; `src/knots.test.ts` pins
   each knot's over-and-under pattern so a change to the points can't quietly break one. A
