@@ -110,7 +110,8 @@ describe('a knot page', () => {
     expect(count()).toBe('Step 1 of 4');
     expect(caption()).toBe(KNOTS[4].steps[0].text);
     expect($<HTMLButtonElement>('[data-back]').disabled).toBe(true);
-    expect($('[data-play-controls]').hidden).toBe(true);
+    expect($('[data-middle]').textContent).toBe('Again');
+    expect($('[data-next]').classList.contains('primary')).toBe(true);
     expect($('[data-art] svg')).not.toBeNull();
   });
 
@@ -127,7 +128,7 @@ describe('a knot page', () => {
     expect($<HTMLButtonElement>('[data-next]').disabled).toBe(true);
     click('[data-back]');
     expect(count()).toBe('Step 3 of 4');
-    click('[data-again]');
+    click('[data-middle]');
     expect(count()).toBe('Step 3 of 4');
   });
 
@@ -135,13 +136,16 @@ describe('a knot page', () => {
     open('figure8');
     click('[data-mode="play"]');
     expect(getMode()).toBe('play');
-    expect($('[data-step-controls]').hidden).toBe(true);
-    expect($('[data-play-controls]').hidden).toBe(false);
+    expect($('[data-middle]').classList.contains('primary')).toBe(true);
     // With less motion it plays to the end at once.
     expect(count()).toBe('Step 4 of 4: pull tight');
-    expect($('[data-play]').textContent).toBe('Play again');
-    click('[data-play]');
-    expect($('[data-play]').textContent).toBe('Play again');
+    expect($('[data-middle]').textContent).toBe('Play again');
+    expect($<HTMLButtonElement>('[data-next]').disabled).toBe(true);
+    click('[data-middle]');
+    expect($('[data-middle]').textContent).toBe('Play again');
+    // Back plays on from the step before.
+    click('[data-back]');
+    expect(count()).toBe('Step 4 of 4: pull tight');
 
     go('#/');
     go('#/k/clove');
@@ -149,7 +153,7 @@ describe('a knot page', () => {
     click('[data-mode="play"]'); // already chosen: nothing changes
     click('[data-mode="step"]');
     expect(getMode()).toBe('step');
-    expect($('[data-step-controls]').hidden).toBe(false);
+    expect($('[data-middle]').textContent).toBe('Again');
     expect(count()).toBe('Step 4 of 4: pull tight');
   });
 
@@ -161,16 +165,25 @@ describe('a knot page', () => {
     open('square');
     expect(count()).toBe('Step 1 of 4');
     vi.advanceTimersByTime(3000);
-    click('[data-play]');
-    expect($('[data-play]').textContent).toBe('Play');
+    click('[data-middle]');
+    expect($('[data-middle]').textContent).toBe('Play');
     const paused = count();
     vi.advanceTimersByTime(20000);
     expect(count()).toBe(paused);
-    click('[data-play]');
-    expect($('[data-play]').textContent).toBe('Pause');
+    click('[data-middle]');
+    expect($('[data-middle]').textContent).toBe('Pause');
     vi.advanceTimersByTime(30000);
     expect(count()).toBe('Step 4 of 4: pull tight');
-    click('[data-restart]');
+    expect($('[data-middle]').textContent).toBe('Play again');
+    click('[data-back]');
+    expect(count()).toBe('Step 3 of 4');
+    expect($('[data-middle]').textContent).toBe('Pause');
+    click('[data-next]');
+    expect(count()).toBe('Step 4 of 4: pull tight');
+    click('[data-middle]');
+    click('[data-middle]');
+    vi.advanceTimersByTime(30000);
+    click('[data-middle]');
     expect(count()).toBe('Step 1 of 4');
   });
 });
@@ -206,11 +219,9 @@ describe('in use', () => {
     go('#/k/figure8');
     click('[data-mode="scene"]');
     expect(getMode()).toBe('scene');
-    expect($('[data-step-controls]').hidden).toBe(true);
-    expect($('[data-play-controls]').hidden).toBe(false);
     expect($('[data-count]').textContent).toMatch(/^In use: .*pulley block/);
     expect($('[data-art] svg').classList.contains('scene-art')).toBe(true);
-    expect($('[data-play]').textContent).toBe('Play again');
+    expect($('[data-middle]').textContent).toBe('Play again');
     click('[data-mode="play"]');
     expect($('[data-count]').textContent).toBe('Step 4 of 4: pull tight');
     expect($('[data-art] svg').classList.contains('scene-art')).toBe(false);

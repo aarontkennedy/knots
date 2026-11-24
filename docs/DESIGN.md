@@ -44,7 +44,10 @@ board.
 
 ## Watching
 
-Step by step is the default: Back, Again and Next. Play through runs every step with a
-pause between, and can be paused. In use plays the same steps in the knot's scene. The
+Step by step is the default. Play through runs every step with a pause between. In use
+plays the same steps in the knot's scene. The buttons sit right under the mode choice and
+are the same row in every mode: Back and Next move a step (in Play through and In use they
+play on from that step), and the middle one is Again when stepping, or Pause, Play and
+Play again when playing. The
 choice is remembered. With the phone set to reduce motion, each step shows finished
 without animating.

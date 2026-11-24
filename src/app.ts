@@ -131,17 +131,13 @@ function knotHtml(k: Knot, mode: Mode): string {
     <button type="button" data-mode="play" aria-pressed="${mode === 'play'}">Play through</button>
     <button type="button" data-mode="scene" aria-pressed="${mode === 'scene'}">In use</button>
   </div>
+  <div class="controls">
+    <button type="button" data-back>Back</button>
+    <button type="button" data-middle></button>
+    <button type="button" data-next>Next</button>
+  </div>
   <p class="step-count" data-count></p>
   <p class="caption" data-caption aria-live="polite"></p>
-  <div class="controls" data-step-controls${mode === 'step' ? '' : ' hidden'}>
-    <button type="button" data-back>Back</button>
-    <button type="button" data-again>Again</button>
-    <button type="button" class="primary" data-next>Next</button>
-  </div>
-  <div class="controls" data-play-controls${mode === 'step' ? ' hidden' : ''}>
-    <button type="button" data-restart>Start over</button>
-    <button type="button" class="primary" data-play>Pause</button>
-  </div>
   <section><h2>What it’s for</h2><ul class="uses">${k.uses.map((u) => `<li>${esc(u)}</li>`).join('')}</ul></section>
   <section><h2>Remember it</h2><p class="remember">${esc(k.remember)}</p></section>
 </main>`;
@@ -164,14 +160,35 @@ class KnotPage {
   ) {
     ({ segments: this.segments, total: this.total } = this.timeline());
     root.innerHTML = knotHtml(knot, mode);
-    this.q('[data-next]').addEventListener('click', () => this.showStep(this.step + 1));
-    this.q('[data-back]').addEventListener('click', () => this.showStep(this.step - 1));
-    this.q('[data-again]').addEventListener('click', () => this.showStep(this.step));
-    this.q('[data-play]').addEventListener('click', () => (this.playing ? this.pause() : this.play(this.t >= this.total ? 0 : this.t)));
-    this.q('[data-restart]').addEventListener('click', () => this.play(0));
+    this.q('[data-next]').addEventListener('click', () => this.go(this.step + 1));
+    this.q('[data-back]').addEventListener('click', () => this.go(this.step - 1));
+    this.q('[data-middle]').addEventListener('click', () => this.middle());
     root.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach((b) => b.addEventListener('click', () => this.setMode(b.dataset.mode as Mode)));
+    this.setButtons();
     if (mode === 'step') this.showStep(0);
     else this.play(0);
+  }
+
+  /**
+   * One row of buttons for every mode: Back and Next move a step (playing on from there when
+   * playing through), and the middle one shows the step again or plays and pauses.
+   */
+  private setButtons(): void {
+    const step = this.mode === 'step';
+    this.q('[data-next]').classList.toggle('primary', step);
+    this.q('[data-middle]').classList.toggle('primary', !step);
+    this.q('[data-middle]').textContent = step ? 'Again' : this.playing ? 'Pause' : this.t >= this.total ? 'Play again' : 'Play';
+  }
+
+  private go(step: number): void {
+    if (this.mode === 'step') this.showStep(step);
+    else this.play(this.segments[Math.max(0, Math.min(this.steps - 1, step))].start);
+  }
+
+  private middle(): void {
+    if (this.mode === 'step') this.showStep(this.step);
+    else if (this.playing) this.pause();
+    else this.play(this.t >= this.total ? 0 : this.t);
   }
 
   /** The steps, and pulling tight. */
@@ -221,17 +238,17 @@ class KnotPage {
   play(t: number): void {
     this.stop();
     this.playing = true;
-    this.q('[data-play]').textContent = 'Pause';
+    this.setButtons();
     this.stop = run(t, this.total, (now) => this.draw(now), () => {
       this.playing = false;
-      this.q('[data-play]').textContent = 'Play again';
+      this.setButtons();
     });
   }
 
   pause(): void {
     this.stop();
     this.playing = false;
-    this.q('[data-play]').textContent = 'Play';
+    this.setButtons();
   }
 
   setMode(mode: Mode): void {
@@ -239,8 +256,6 @@ class KnotPage {
     this.mode = mode;
     setMode(mode);
     this.root.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mode === mode)));
-    this.q('[data-step-controls]').hidden = mode !== 'step';
-    this.q('[data-play-controls]').hidden = mode === 'step';
     this.pause();
     ({ segments: this.segments, total: this.total } = this.timeline());
     const step = this.step;
